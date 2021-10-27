@@ -18,24 +18,16 @@ display_drivers_selector () {
     read -r -p "Insert the number of the corresponding display drivers: " choice
     case $choice in
         1 ) DISPLAY_DRVIER="intel"
-            PACKAGES_DRIVER_MULTILIB="lib32-mesa"
-            PACKAGES_HARDWARE_ACCELERATION="intel-media-driver"
-            PACKAGES_HARDWARE_ACCELERATION_MULTILIB=""
             MKINITCPICO_KMS_MODULES="i915" 
+            pacstrap /mnt mesa lib32-mesa intel-media-driver
             echo "options i915 enable_fbc=1 fastboot=1" > /mnt/etc/modprobe.d/1915.conf
             ;;
         2 ) DISPLAY_DRVIER="nvidia"
-            PACKAGES_DRIVER="nvidia"
-            PACKAGES_DRIVER_MULTILIB="lib32-nvidia-utils"
-            PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
-            PACKAGES_HARDWARE_ACCELERATION_MULTILIB="lib32-libva-mesa-driver"
+            pacstrap /mnt mesa nvidia lib32-nvidia-utils libva-mesa-driver lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nvidia nvidia_modeset nvidia_uvm nvidia_drm" 
             ;;
         3 ) DISPLAY_DRVIER="nouveau"
-            PACKAGES_DRIVER=""
-            PACKAGES_DRIVER_MULTILIB="lib32-mesa"
-            PACKAGES_HARDWARE_ACCELERATION="libva-mesa-driver"
-            PACKAGES_HARDWARE_ACCELERATION_MULTILIB="lib32-libva-mesa-driver"
+            pacstrap /mnt mesa lib32-mesa libva-mesa-driver lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nouveau" 
             ;;
         * ) echo "You did not enter a valid selection."
@@ -110,11 +102,12 @@ mount $root /mnt &>/dev/null
 
 
 # Installation.
-echo "Server = 'https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
-kernel_selector
-sed -i 's/#Color/Color/' etc/pacman.conf
+echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
+sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
 pacstrap /mnt base linux linux-firmware base-devel
+sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
+sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
 echo "[multilib]" >> /mnt/etc/pacman.conf
 echo "Include = /etc/pacman.d/mirrorlist" >> /mnt/etc/pacman.conf
@@ -123,7 +116,7 @@ echo "" >> /mnt/etc/pacman.conf
 # Setting Timezone and localisation.
 read -r -p "Please insert the region and city you use (format: Region/City): " region_city
 arch-chroot /mnt ln -s -f /usr/share/zoneinfo/$region_city /etc/localtime
-arch-chroot /mnt hwclock --systoch 
+arch-chroot /mnt hwclock --systohc 
 read -r -p "Please insert the locale you use (format: xx_XX): " locale
 echo "$locale.UTF-8 UTF-8"  > /etc/locale.gen
 echo "$locale.UTF-8 UTF-8"  > /mnt/etc/locale.gen
@@ -131,20 +124,6 @@ echo "LANG=$locale.UTF-8" > /mnt/etc/locale.conf
 locale-gen
 arch-chroot /mnt locale-gen
 echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
-
-
-# Honestly not sure what this is.
-arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/"
-    cat <<EOT > /mnt/etc/X11/xorg.conf.d/00-keyboard.conf
-# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
-# probably wise not to edit this file manually. Use localectl(1) to
-# instruct systemd-localed to update it.
-Section "InputClass"
-    Identifier "system-keyboard"
-    MatchIsKeyboard "on"
-    $OPTIONS
-EndSection
-EOT
 
 # Setting swappiness.
 echo "vm.swappiness-10" > /mnt/etc/sysctl.d/99-sysctl.conf
@@ -158,9 +137,6 @@ printf "$password\n$password" | arch-chroot /mnt passwd
 # Generating /etc/fstab.
 echo "Generating a new fstab."
 genfstab -U /mnt >> /mnt/etc/fstab
-echo "# swap" >> /mnt/etc/fstab
-echo "/swapfile none swap defaults 0 0" >> /mnt/etc/fstab
-echo "" >> /mnt/etc/fstab
 
 # Setting hosts file.
 echo "Setting hosts file."
@@ -173,7 +149,6 @@ EOF
 # Installing display drivers.
 echo "Installing display drivers."
 display_drivers_selector
-pacman_install "mesa $PACKAGES_DRIVER $PACKAGES_HARDWARE_ACCELERATION $PACKAGES_DRIVER_MULTILIB $PACKAGES_HARDWARE_ACCELERATION_MULTILIB"  
 
 # Configuring /etc/mkinitcpio.conf
 echo "Configuring /etc/mkinitcpio.conf"
