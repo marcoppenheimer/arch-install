@@ -208,6 +208,7 @@ if [[ $DISK == *"nvme"* ]]; then
     KERNELS_PARAMETERS="nvme_load=YES"
 fi
 
+arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
 arch-chroot /mnt rm /boot/refind_linux.conf
