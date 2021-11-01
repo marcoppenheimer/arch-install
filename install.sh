@@ -115,7 +115,7 @@ UUID_ROOT=$(blkid -s UUID -o value $root)
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux linux-firmware base-devel
+pacstrap /mnt base linux-zen linux-firmware base-devel
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
@@ -165,10 +165,6 @@ echo "Configuring /etc/mkinitcpio.conf"
 HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
 arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
 arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
-
-# Installing kernel.
-echo "Installing kernel."
-arch-chroot /mnt pacman -Syu --noconfirm --needed linux-headers linux-zen
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
