@@ -206,6 +206,7 @@ esac
 
 if [[ $DISK == *"nvme"* ]]; then
     KERNELS_PARAMETERS="nvme_load=YES"
+fi
 
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
