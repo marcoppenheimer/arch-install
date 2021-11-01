@@ -19,15 +19,24 @@ display_drivers_selector () {
     case $choice in
         1 ) DISPLAY_DRVIER="intel"
             MKINITCPICO_KMS_MODULES="i915" 
-            pacstrap /mnt mesa lib32-mesa intel-media-driver
+            arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
+            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
+            arch-chroot /mnt pacman -Syu --noconfirm --needed intel-media-driver
             echo "options i915 enable_fbc=1 fastboot=1" > /mnt/etc/modprobe.d/1915.conf
             ;;
         2 ) DISPLAY_DRVIER="nvidia"
-            pacstrap /mnt mesa nvidia lib32-nvidia-utils libva-mesa-driver lib32-libva-mesa-driver 
+            arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
+            arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia
+            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
+            arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
+            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nvidia nvidia_modeset nvidia_uvm nvidia_drm" 
             ;;
         3 ) DISPLAY_DRVIER="nouveau"
-            pacstrap /mnt mesa lib32-mesa libva-mesa-driver lib32-libva-mesa-driver 
+            arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
+            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
+            arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
+            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nouveau" 
             ;;
         * ) echo "You did not enter a valid selection."
@@ -99,7 +108,8 @@ mount $efi /mnt/efi
 swapon $swap
 mount $root /mnt &>/dev/null
 
-
+UUID_BOOT=$(blkid -s UUID -o value $efi)
+UUID_ROOT=$(blkid -s UUID -o value $root)
 
 # Installation.
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
@@ -158,8 +168,8 @@ arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /e
 
 # Installing kernel.
 echo "Installing kernel."
-pacman_install "linux-headers"
-pacman_install "linux-zen"  
+arch-chroot /mnt pacman -Syu linux-headers
+arch-chroot /mnt pacman -Syu linux-zen
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
@@ -167,7 +177,7 @@ arch-chroot /mnt mkinitcpio -P
 
 # Installing network.
 echo "Installing network."
-pacman_install "networkmanager"
+arch-chroot /mnt pacman -Syu --noconfirm --needed networkmanager
 arch-chroot /mnt systemctl enable NetworkManager.service
 
 # Creating personal user and groups.
@@ -177,40 +187,45 @@ read -r -p "Please enter your desired password" user_password
 arch-chroot /mnt useradd -m -G "wheel,storage,optical" -s /bin/bash $username
 printf "$user_password\n$user_password" | arch-chroot /mnt passwd $username
 arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-pacman_install "xdg-user-dirs"
+arch-chroot /mnt pacman -Syu --noconfirm --needed xdg-user-dirs
 
 # TODO: - YOU GOT HERE YOU SHIT
 # Bootloader
 CPU=$(grep vendor_id /proc/cpuinfo)
-if [[ $CPU == *"AuthenticAMD"* ]]
-then
-    pacman_install "amd-ucode"
+if [[ $CPU == *"AuthenticAMD"* ]]; then
+    arch-chroot /mnt pacman -Syu --noconfirm --needed amd-ucode
+    REFIND_MICROCODE="initrd=/amd-ucode.img"
 else
-    pacman_install "intel-ucode"
+    arch-chroot /mnt pacman -Syu --noconfirm --needed intel-ucode
+    REFIND_MICROCODE="initrd=/intel-ucode.img"
 fi
+
 case "$DISPLAY_DRVIER" in "nvidia" | "nvidia-390xx" | "nvidia-390xx-lts" )
-    CMDLINE_LINUX="$CMDLINE_LINUX nvidia-drm.modeset=1"
+    CMDLINE_LINUX="nvidia-drm.modeset=1"
     ;;
 esac
-if [[ $DISK == *"nvme"* ]]
-then
+
+if [[ $DISK == *"nvme"* ]]; then
     KERNELS_PARAMETERS="nvme_load=YES"
-pacman_install "refind"
+
+arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
+arch-chroot /mnt rm /boot/refind_linux.conf
+
 arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "$efi/EFI/refind/refind.conf"
 arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "$efi/EFI/refind/refind.conf"
+
 cat <<EOT >> "/mnt$efi/EFI/refind/refind.conf"
-# alis
-menuentry "Arch Linux" {
-    volume   $PARTUUID_BOOT
-    loader   /vmlinuz-linux
-    initrd   /initramfs-linux.img
+menuentry "Arch Linux (zen)" {
+    volume   $UUID_BOOT
+    loader   /vmlinuz-linux-zen
+    initrd   /initramfs-linux-zen.img
     icon     /EFI/refind/icons/os_arch.png
-    options  "$REFIND_MICROCODE $CMDLINE_LINUX_ROOT rw $CMDLINE_LINUX"
-    submenuentry "Boot using fallback initramfs"
-	      initrd /initramfs-linux-fallback.img"
+    options  "$REFIND_MICROCODE rw $CMDLINE_LINUX"
+    submenuentry "Boot using fallback initramfs" {
+	      initrd /initramfs-linux-lts-fallback.img
     }
-    submenuentry "Boot to terminal"
+    submenuentry "Boot to terminal" {
 	      add_options "systemd.unit=multi-user.target"
     }
 }
@@ -220,14 +235,15 @@ arch-chroot /mnt systemctl set-default multi-user.target
 
 # Installing custom shell.
 echo "Installing custom shell."
-pacman_install "zsh"
+arch-chroot /mnt pacman -Syu --noconfirm --needed zsh
 CUSTOM_SHELL_PATH="/usr/bin/zsh"
 arch-chroot /mnt chsh -s "/usr/bin/zsh" "root" 
 arch-chroot /mnt chsh -s "/usr/bin/zsh" $username 
 
 # Installing WM/DE.
 echo "Installing WM/DE."
-pacman_install "i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter xorgserver"
+arch-chroot /mnt pacman -Syu --noconfirm --needed i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter xorg-server
 arch-chroot /mnt systemctl enable lightdm.service
 
-# efibootmgr $microcode $kernel neovim man-db man-pages texinfo 
+# Installing bare bones packages
+arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo
