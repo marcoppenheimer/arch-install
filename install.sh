@@ -168,8 +168,7 @@ arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /e
 
 # Installing kernel.
 echo "Installing kernel."
-arch-chroot /mnt pacman -Syu linux-headers
-arch-chroot /mnt pacman -Syu linux-zen
+arch-chroot /mnt pacman -Syu --noconfirm --needed linux-headers linux-zen
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
