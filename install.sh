@@ -182,7 +182,7 @@ arch-chroot /mnt systemctl enable NetworkManager.service
 # Creating personal user and groups.
 echo "Creating personal user and groups."
 read -r -p "Please enter your desired username: " username
-read -r -p "Please enter your desired password" user_password
+read -r -p "Please enter your desired password: " user_password
 arch-chroot /mnt useradd -m -G "wheel,storage,optical" -s /bin/bash $username
 printf "$user_password\n$user_password" | arch-chroot /mnt passwd $username
 arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
