@@ -17,14 +17,14 @@ display_drivers_selector () {
     echo "3) nouveau" 
     read -r -p "Insert the number of the corresponding display drivers: " choice
     case $choice in
-        1 ) DISPLAY_DRVIER="intel"
+        1 ) DISPLAY_DRIVER="intel"
             MKINITCPICO_KMS_MODULES="i915" 
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed intel-media-driver
             echo "options i915 enable_fbc=1 fastboot=1" > /mnt/etc/modprobe.d/1915.conf
             ;;
-        2 ) DISPLAY_DRVIER="nvidia"
+        2 ) DISPLAY_DRIVER="nvidia"
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
@@ -32,7 +32,7 @@ display_drivers_selector () {
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nvidia nvidia_modeset nvidia_uvm nvidia_drm" 
             ;;
-        3 ) DISPLAY_DRVIER="nouveau"
+        3 ) DISPLAY_DRIVER="nouveau"
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
@@ -199,7 +199,7 @@ else
     REFIND_MICROCODE="initrd=/intel-ucode.img"
 fi
 
-case "$DISPLAY_DRVIER" in "nvidia" | "nvidia-390xx" | "nvidia-390xx-lts" )
+case "$DISPLAY_DRIVER" in "nvidia"|"nvidia-390xx"|"nvidia-390xx-lts")
     CMDLINE_LINUX="nvidia-drm.modeset=1"
     ;;
 esac
