@@ -134,6 +134,17 @@ echo "LANG=$locale.UTF-8" > /mnt/etc/locale.conf
 locale-gen
 arch-chroot /mnt locale-gen
 echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
+arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/"
+cat <<EOT > /mnt/etc/X11/xorg.conf.d/00-keyboard.conf
+# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+# probably wise not to edit this file manually. Use localectl(1) to
+# instruct systemd-localed to update it.
+Section "InputClass"
+    Identifier "system-keyboard"
+    MatchIsKeyboard "on"
+    $OPTIONS
+EndSection
+EOT
 
 # Setting swappiness.
 echo "vm.swappiness-10" > /mnt/etc/sysctl.d/99-sysctl.conf
@@ -239,7 +250,7 @@ arch-chroot /mnt chsh -s "/usr/bin/zsh" $username
 
 # Installing WM/DE.
 echo "Installing WM/DE."
-arch-chroot /mnt pacman -Syu --noconfirm --needed i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter xorg-server
+arch-chroot /mnt pacman -Syu --noconfirm --needed i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter xorg-server xorg-apps xorg-xinit
 arch-chroot /mnt systemctl enable lightdm.service
 
 # Installing bare bones packages
