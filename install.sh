@@ -221,11 +221,11 @@ arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
 arch-chroot /mnt rm /boot/refind_linux.conf
 
-arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "/boot/EFI/refind/refind.conf"
-arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "/boot/EFI/refind/refind.conf"
-arch-chroot /mnt sed -i 's/^use_graphics_for.*/use_graphics_for linux/' "/boot/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "/boot/efi/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "/boot/efi/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^use_graphics_for.*/use_graphics_for linux/' "/boot/efi/EFI/refind/refind.conf"
 
-cat <<EOT >> "/mnt/boot/EFI/refind/refind.conf"
+cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
 menuentry "Arch Linux (zen)" {
     volume   $UUID_BOOT
     loader   /vmlinuz-linux-zen
