@@ -1,0 +1,94 @@
+configuration {
+  drun-display-format: "{name}";
+  disable-history: false;
+  hide-scrollbar: true;
+  sidebar-mode: false;
+  display-drun: "🔍";
+}
+
+* {
+  black:      #000000;
+  red:        #eb6e67;
+  green:      #95ee8f;
+  yellow:     #f8c456;
+  blue:       #6eaafb;
+  magenta:   #d886f3;
+  cyan:       #6cdcf7;
+  emphasis:   #50536b;
+  text:       #dfdfdf;
+  text-alt:   #b2b2b2;
+  fg:         #abb2bf;
+  bg:         #282c34;
+
+  spacing: 0;
+  background-color: transparent;
+
+  text-color: @text;
+}
+
+window {
+  transparent: "screenshot";
+  background-color: @bg;
+  border: 3px;
+  height: 10%;
+  width: 25%;
+  border-color: @fg;
+  border-radius: 5px;
+}
+
+mainbox {
+  background-color: @bg;  
+  border-color: @emphasis;
+  children: [inputbar, listview];
+}
+
+inputbar {
+  background-color: @bg;
+  text-color: @text-alt;
+  margin: 20px;
+  children: [prompt, entry];
+}
+
+prompt {
+  text-color: @blue;
+}
+
+entry {
+  margin: 0px 10px;
+  text-color: @fg;
+}
+
+listview {
+  spacing: 5px;
+  dynamic: true;
+  columns: 5;
+  scrollbar: false;
+  cycle: false;
+  layout: vertical;
+  margin: 0px 10px;
+}
+
+element {
+  padding: 5px;
+  background-color: @bg;
+  text-color: @text-alt;
+  highlight: bold #95ee8f;
+  orientation: vertical;
+  padding: 2% 0% 2% 0%;
+}
+
+element selected {
+  background-color: @emphasis;
+  text-color: @text;
+  border: 0px 0px 1px 0px;
+  border-color: @magenta;
+  border-radius: 5px;
+}
+
+element-text {
+  font: "Knack Nerd Font:style=Bold 9";
+  horizontal-align: 0.5;
+  vertical-align: 0.5;
+//   padding: 0.5% 0% 0% 0%;
+//   margin: 0.5% 0.5% -0.5% 0.5%;
+}

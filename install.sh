@@ -193,7 +193,6 @@ read -r -p "Please enter your desired password: " user_password
 arch-chroot /mnt useradd -m -G "wheel,storage,optical" -s /bin/bash $username
 printf "$user_password\n$user_password" | arch-chroot /mnt passwd $username
 arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
-arch-chroot /mnt pacman -Syu --noconfirm --needed xdg-user-dirs
 
 # TODO: - YOU GOT HERE YOU SHIT
 # Bootloader
@@ -252,6 +251,7 @@ arch-chroot /mnt chsh -s "/usr/bin/zsh" $username
 echo "Installing WM/DE."
 arch-chroot /mnt pacman -Syu --noconfirm --needed i3-gaps i3blocks i3lock i3status dmenu rxvt-unicode lightdm lightdm-gtk-greeter xorg-server xorg-apps xorg-xinit
 arch-chroot /mnt systemctl enable lightdm.service
+arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
 arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo

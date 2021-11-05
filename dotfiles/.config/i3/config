@@ -1,0 +1,96 @@
+#mod key
+set $mod Mod4
+
+#font
+# font 
+
+#title
+title_align center
+
+#floating
+floating_modifier $mod
+
+#default orientation
+default_orientation auto
+
+#workspace_layout
+workspace_layout default
+
+#default border style
+default_border pixel 5
+default_floating_border none
+smart_borders on
+smart_borders no_gaps
+hide_edge_borders smart_no_gaps
+
+#gaps
+gaps inner 10
+
+#window specific
+for_window [class="mpv"] floating enable move position center
+for_window [class="Pavucontrol"] floating enable
+for_window [class="File Transfer*"] floating enable move position center
+for_window [urgent=latest] focus
+for_window[window_role="Dialog*"] focus
+for_window [ class="^Microsoft Teams" ] floating enable
+popup_during_fullscreen leave_fullscreen
+for_window [class=".*"] border pixel 0
+
+# start a terminal
+bindsym $mod+Return exec kitty 
+
+# kill focused window
+bindsym $mod+q kill
+
+#launcher
+bindsym $mod+grave exec --no-startup-id "~/.config/rofi/launchers/launch.sh"
+#rofi-screenshot
+bindsym $mod+0 exec --no-startup-id "~/.config/rofi/rofi-screenshot/rofi-screenshot.sh"
+
+# change focus
+bindsym $mod+h focus left
+bindsym $mod+j focus down
+bindsym $mod+k focus up
+bindsym $mod+l focus right
+bindsym $mod+a focus parent
+
+# move focused window
+bindsym $mod+Shift+h move left
+bindsym $mod+Shift+j move down
+bindsym $mod+Shift+k move up
+bindsym $mod+Shift+l move right
+
+#layouts
+bindsym $mod+Tab split toggle
+bindsym $mod+t layout tabbed
+bindsym $mod+s layout stacked
+bindsym $mod+Escape fullscreen toggle
+
+# reload the configuration file
+bindsym $mod+Shift+c reload
+
+# restart i3 inplace (preserves your layout/session, can be used to upgrade i3)
+bindsym $mod+Shift+r restart
+
+#resizing
+bindsym $mod+Ctrl+Left resize shrink width 15 px
+bindsym $mod+Ctrl+Down resize grow height 15 px
+bindsym $mod+Ctrl+Up resize shrink height 15 px
+bindsym $mod+Ctrl+Right resize grow width 15 px
+
+#workspaces
+set $ws1 "1"
+set $ws2 "2"
+bindsym $mod+1 workspace $ws1
+bindsym $mod+2 workspace $ws2
+bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
+bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
+
+#colortheme
+# <colorclass> <border> <background> <text> <indicator> <child_border>
+client.focused          #44475a #282a36 #F8F8F2 #282a36 #44475a
+client.focused_inactive #44475a #21222c #F8F8F2 #21222c #44475a
+client.unfocused        #44475a #21222c #6272a4 #21222c #282a36
+client.urgent           #44475a #FF5555 #F8F8F2 #FF5555 #FF5555
+client.placeholder      #44475a #282A36 #F8F8F2 #282A36 #44475a
+client.background       #F8F8F2
