@@ -103,8 +103,8 @@ echo "Formatting the root Partition as ext4."
 mkfs.ext4 $root &>/dev/null
 
 # Mounting.
-mkdir /mnt/efi
-mount $efi /mnt/efi
+mkdir /mnt/boot
+mount $efi /mnt/boot
 swapon $swap
 mount $root /mnt &>/dev/null
 
@@ -214,15 +214,18 @@ if [[ $DISK == *"nvme"* ]]; then
     KERNELS_PARAMETERS="nvme_load=YES"
 fi
 
+CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS quiet loglevel=3 vga=current rd.systemd.show_status=auto rd.udev.log_level=3 rd.udev.log-priority=3"
+
 arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
 arch-chroot /mnt rm /boot/refind_linux.conf
 
-arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "$efi/EFI/refind/refind.conf"
-arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "$efi/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "/boot/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "/boot/EFI/refind/refind.conf"
+arch-chroot /mnt sed -i 's/^use_graphics_for.*/use_graphics_for linux/' "/boot/EFI/refind/refind.conf"
 
-cat <<EOT >> "/mnt$efi/EFI/refind/refind.conf"
+cat <<EOT >> "/mnt/boot/EFI/refind/refind.conf"
 menuentry "Arch Linux (zen)" {
     volume   $UUID_BOOT
     loader   /vmlinuz-linux-zen
@@ -237,8 +240,6 @@ menuentry "Arch Linux (zen)" {
     }
 }
 EOT
-
-arch-chroot /mnt systemctl set-default multi-user.target
 
 # Installing custom shell.
 echo "Installing custom shell."
