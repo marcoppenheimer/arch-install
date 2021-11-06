@@ -104,12 +104,12 @@ mkfs.ext4 $root &>/dev/null
 
 # Mounting.
 mkdir /mnt/boot
-mount $efi /mnt/boot
+mount $efi /mnt/efi
 swapon $swap
 mount $root /mnt &>/dev/null
 
-UUID_BOOT=$(blkid -s UUID -o value $efi)
-UUID_ROOT=$(blkid -s UUID -o value $root)
+UUID_BOOT=$(blkid -s PARTUUID -o value $efi)
+UUID_ROOT=$(blkid -s PARTUUID -o value $root)
 
 # Installation.
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
