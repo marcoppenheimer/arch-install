@@ -76,13 +76,14 @@ fi
 
 # Creating a new partition scheme.
 echo "Creating new partition scheme on $DISK."
-parted -s "$DISK" \
-    mkpart "efi" fat32 1MiB 513MiB \
-    set 1 esp on \
+parted "$DISK" \
+    mklabel gpt \
+    mkpart "ESP" fat32 1MiB 513MiB \
     mkpart "swap" linux-swap 513MiB 7513MiB \
-    mkpart "root" ext4 7513MiB 100%
+    mkpart "root" ext4 7513MiB 100% \
+    set 1 esp on
 
-efi="/dev/disk/by-partlabel/efi"
+ESP="/dev/disk/by-partlabel/ESP"
 swap="/dev/disk/by-partlabel/swap"
 root="/dev/disk/by-partlabel/root"
 
@@ -92,21 +93,19 @@ partprobe "$DISK"
 
 # Formatting the EFI as FAT32.
 echo "Formatting the EFI Partition as FAT32."
-mkfs.fat -F32 $efi &>/dev/null
+mkfs.fat -n ESP -F32 $ESP
 
 # Formatting the swap as FAT32.
 echo "Formatting the swap Partition."
-mkswap $swap &>/dev/null
+mkswap $swap
 
 # Formatting the ESP as FAT32.
 echo "Formatting the root Partition as ext4."
-mkfs.ext4 $root &>/dev/null
+mkfs.ext4 $root
 
 # Mounting.
-mkdir /mnt/boot
-mount $efi /mnt/efi
+mount $root /mnt
 swapon $swap
-mount $root /mnt &>/dev/null
 
 UUID_BOOT=$(blkid -s PARTUUID -o value $efi)
 UUID_ROOT=$(blkid -s PARTUUID -o value $root)
@@ -218,12 +217,20 @@ CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS quiet loglevel=3 vga=current r
 
 arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
-arch-chroot /mnt refind-install
-arch-chroot /mnt rm /boot/refind_linux.conf
 
-arch-chroot /mnt sed -i 's/^timeout.*/timeout 5/' "/boot/efi/EFI/refind/refind.conf"
-arch-chroot /mnt sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' "/boot/efi/EFI/refind/refind.conf"
-arch-chroot /mnt sed -i 's/^use_graphics_for.*/use_graphics_for linux/' "/boot/efi/EFI/refind/refind.conf"
+arch-chroot /mnt /bin/bash -e <<EOF
+    mkdir -p /efi/EFI/refind
+    cp /usr/share/refind/refind_x64.efi /efi/EFI/refind/
+    efibootmgr --create --disk $DISK --part 1 --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
+    mkdir /efi/EFI/refind/drivers_x64
+    cp -r /usr/share/refind/drivers_x64/ /efi/EFI/refind/drivers_x64
+    cp /usr/share/refind/refind.conf-sample /efi/EFI/refind/refind.conf
+    cp -r /usr/share/refind/icons /efi/EFI/refind/
+    sed -i 's/^timeout.*/timeout 5/' /efi/EFI/refind/refind.conf
+    sed -i '/extra_kernel_version_strings/s/^/#/g' /efi/EFI/refind/refind.conf
+    sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' /efi/EFI/refind/refind.conf
+    sed -i 's/^use_graphics_for.*/use_graphics_for linux/' /efi/EFI/refind/refind.conf
+EOF
 
 cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
 menuentry "Arch Linux (zen)" {
