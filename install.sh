@@ -105,7 +105,7 @@ mkfs.ext4 $root
 
 # Mounting.
 mount $root /mnt
-mkdir /mnt/boot/efi
+mkdir -p /mnt/boot/efi
 mount $ESP /mnt/boot/efi
 swapon $swap
 
