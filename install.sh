@@ -26,7 +26,7 @@ display_drivers_selector () {
             ;;
         2 ) DISPLAY_DRIVER="nvidia"
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
-            arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia
+            arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia-dkms
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
             arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
@@ -76,7 +76,7 @@ fi
 
 # Creating a new partition scheme.
 echo "Creating new partition scheme on $DISK."
-parted "$DISK" \
+parted -s "$DISK" \
     mklabel gpt \
     mkpart "ESP" fat32 1MiB 513MiB \
     mkpart "swap" linux-swap 513MiB 7513MiB \
@@ -105,16 +105,18 @@ mkfs.ext4 $root
 
 # Mounting.
 mount $root /mnt
+mkdir /mnt/boot/efi
+mount $ESP /mnt/boot/efi
 swapon $swap
 
-UUID_BOOT=$(blkid -s PARTUUID -o value $efi)
+UUID_BOOT=$(blkid -s PARTUUID -o value $ESP)
 UUID_ROOT=$(blkid -s PARTUUID -o value $root)
 
 # Installation.
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux-zen linux-firmware base-devel
+pacstrap /mnt base linux-zen linux-firmware linux-zen-headers base-devel
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
@@ -135,18 +137,18 @@ arch-chroot /mnt locale-gen
 echo "KEYMAP=$keymap" > /mnt/etc/vconsole.conf
 arch-chroot /mnt mkdir -p "/etc/X11/xorg.conf.d/"
 cat <<EOT > /mnt/etc/X11/xorg.conf.d/00-keyboard.conf
-# Written by systemd-localed(8), read by systemd-localed and Xorg. It's
-# probably wise not to edit this file manually. Use localectl(1) to
-# instruct systemd-localed to update it.
-Section "InputClass"
-    Identifier "system-keyboard"
-    MatchIsKeyboard "on"
-    $OPTIONS
-EndSection
+    # Written by systemd-localed(8), read by systemd-localed and Xorg. It's
+    # probably wise not to edit this file manually. Use localectl(1) to
+    # instruct systemd-localed to update it.
+    Section "InputClass"
+        Identifier "system-keyboard"
+        MatchIsKeyboard "on"
+        $OPTIONS
+    EndSection
 EOT
 
 # Setting swappiness.
-echo "vm.swappiness-10" > /mnt/etc/sysctl.d/99-sysctl.conf
+echo "vm.swappiness=10" > /mnt/etc/sysctl.d/99-sysctl.conf
 
 # Setting hostname and password.
 read -r -p "Please enter your desired hostname: " hostname
@@ -170,16 +172,6 @@ EOF
 echo "Installing display drivers."
 display_drivers_selector
 
-# Configuring /etc/mkinitcpio.conf
-echo "Configuring /etc/mkinitcpio.conf"
-HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
-arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
-arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
-
-# Setting mkinitcpio.
-echo "Setting mkinitcpio."
-arch-chroot /mnt mkinitcpio -P
-
 # Installing network.
 echo "Installing network."
 arch-chroot /mnt pacman -Syu --noconfirm --needed networkmanager
@@ -193,18 +185,17 @@ arch-chroot /mnt useradd -m -G "wheel,storage,optical" -s /bin/bash $username
 printf "$user_password\n$user_password" | arch-chroot /mnt passwd $username
 arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
 
-# TODO: - YOU GOT HERE YOU SHIT
 # Bootloader
 CPU=$(grep vendor_id /proc/cpuinfo)
 if [[ $CPU == *"AuthenticAMD"* ]]; then
     arch-chroot /mnt pacman -Syu --noconfirm --needed amd-ucode
-    REFIND_MICROCODE="initrd=/amd-ucode.img"
+    REFIND_MICROCODE="initrd=\amd-ucode.img"
 else
     arch-chroot /mnt pacman -Syu --noconfirm --needed intel-ucode
-    REFIND_MICROCODE="initrd=/intel-ucode.img"
+    REFIND_MICROCODE="initrd=\intel-ucode.img"
 fi
 
-case "$DISPLAY_DRIVER" in "nvidia"|"nvidia-390xx"|"nvidia-390xx-lts")
+case "$DISPLAY_DRIVER" in "nvidia"|"nvidia-dkms"|"nvidia-390xx"|"nvidia-390xx-lts")
     CMDLINE_LINUX="nvidia-drm.modeset=1"
     ;;
 esac
@@ -213,39 +204,78 @@ if [[ $DISK == *"nvme"* ]]; then
     KERNELS_PARAMETERS="nvme_load=YES"
 fi
 
-CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS quiet loglevel=3 vga=current rd.systemd.show_status=auto rd.udev.log_level=3 rd.udev.log-priority=3"
+SILENT_PARAMS="quiet loglevel=3 vga=current rd.systemd.show_status=auto rd.udev.log_level=3 rd.udev.log_priority=3"
+CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS $SILENT_PARAMS"
 
+# Configuring /etc/mkinitcpio.conf
+echo "Configuring /etc/mkinitcpio.conf"
+HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
+arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
+
+# Setting mkinitcpio.
+echo "Setting mkinitcpio."
+arch-chroot /mnt cat <<EOT > "/etc/mkinitcpio.d/linux.preset"
+    # mkinitcpio preset file for the 'linux' package
+
+    ESP_DIR="/boot/efi"
+    cp -af "/boot/vmlinuz-linux$suffix" "$ESP_DIR/"
+    cp -af "/boot/intel-ucode.img" "$ESP_DIR/" 
+    cp -af "/boot/amd-ucode.img" "$ESP_DIR/" 
+    ALL_config="/etc/mkinitcpio.conf"
+    ALL_kver="$ESP_DIR/vmlinuz-linux$suffix"
+
+    PRESETS=('default' 'fallback')
+
+    #default_config="/etc/mkinitcpio.conf"
+    default_image="$ESP_DIR/initramfs-linux$suffix.img"
+    #default_options=""
+
+    #fallback_config="/etc/mkinitcpio.conf"
+    fallback_image="$ESP_DIR/initramfs-linux-fallback.img"
+    fallback_options="-S autodetect"
+EOT
+
+arch-chroot /mnt cat <<EOT > "/etc/mkinitcpio.d/linux-zen.preset"
+    suffix='-zen'
+    source /etc/mkinitcpio.d/linux.preset
+EOT
+
+# Configuring /etc/mkinitcpio.conf
+echo "Configuring /etc/mkinitcpio.conf"
+HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
+arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
+
+# Setting mkinitcpio.
+echo "Setting mkinitcpio."
+arch-chroot /mnt mkinitcpio -P
+
+# Clearing up files
+arch-chroot /mnt rm /boot/efi/initramfs-linux-fallback.img /boot/efi/initramfs-linux.img /boot/efi/initramfs-linux-zen.img /boot/efi/amd-ucode.img /boot/efi/intel-ucode.img
+
+# Refind
 arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
+arch-chroot /mnt refind-install
 
-arch-chroot /mnt /bin/bash -e <<EOF
-    mkdir -p /efi/EFI/refind
-    cp /usr/share/refind/refind_x64.efi /efi/EFI/refind/
-    efibootmgr --create --disk $DISK --part 1 --loader /EFI/refind/refind_x64.efi --label "rEFInd Boot Manager" --verbose
-    mkdir /efi/EFI/refind/drivers_x64
-    cp -r /usr/share/refind/drivers_x64/ /efi/EFI/refind/drivers_x64
-    cp /usr/share/refind/refind.conf-sample /efi/EFI/refind/refind.conf
-    cp -r /usr/share/refind/icons /efi/EFI/refind/
-    sed -i 's/^timeout.*/timeout 5/' /efi/EFI/refind/refind.conf
-    sed -i '/extra_kernel_version_strings/s/^/#/g' /efi/EFI/refind/refind.conf
-    sed -i 's/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/' /efi/EFI/refind/refind.conf
-    sed -i 's/^use_graphics_for.*/use_graphics_for linux/' /efi/EFI/refind/refind.conf
-EOF
-
-cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
-menuentry "Arch Linux (zen)" {
-    volume   $UUID_BOOT
-    loader   /vmlinuz-linux-zen
-    initrd   /initramfs-linux-zen.img
-    icon     /EFI/refind/icons/os_arch.png
-    options  "$REFIND_MICROCODE rw $CMDLINE_LINUX"
-    submenuentry "Boot using fallback initramfs" {
-	      initrd /initramfs-linux-lts-fallback.img
+arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt sed -i "s/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt sed -i "s/^timeout.*/timeout 5/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt cat <<EOT >> "/boot/efi/EFI/refind/refind.conf"
+    menuentry "Arch Linux (zen)" {
+        volume    $UUID_BOOT    
+        loader    \vmlinuz-linux-zen
+        initrd    \initramfs-linux-zen.img
+        icon      \EFI\refind\icons\os_arch.png
+        options   "root=PARTUUID=$UUID_ROOT $REFIND_MICROCODE rw $CMDLINE_LINUX"
+        submenuentry "Boot using fallback initramfs" {
+            initrd \initramfs-linux-fallback.img
+        }
+        submenuentry "Boot to terminal" {
+            add_options "systemd.unit=multi-user.target"
+        }
     }
-    submenuentry "Boot to terminal" {
-	      add_options "systemd.unit=multi-user.target"
-    }
-}
 EOT
 
 # Installing custom shell.
@@ -262,4 +292,4 @@ arch-chroot /mnt systemctl enable lightdm.service
 arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
-arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo
+arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git base-devel
