@@ -228,16 +228,16 @@ echo "Setting mkinitcpio."
 cat <<EOT > "/mnt/etc/mkinitcpio.d/linux.preset"
 # mkinitcpio preset file for the 'linux' package
 
-cp -af "/boot/vmlinuz-linux$suffix" "/boot/efi/"
+cp -af "/boot/vmlinuz-linux\$suffix" "/boot/efi/"
 cp -af "/boot/intel-ucode.img" "/boot/efi/"
 cp -af "/boot/amd-ucode.img" "/boot/efi"
 ALL_config="/etc/mkinitcpio.conf"
-ALL_kver="/boot/efi/vmlinuz-linux$suffix"
+ALL_kver="/boot/efi/vmlinuz-linux\$suffix"
 
 PRESETS=('default' 'fallback')
 
 #default_config="/etc/mkinitcpio.conf"
-default_image="/boot/efi/initramfs-linux$suffix.img"
+default_image="/boot/efi/initramfs-linux\$suffix.img"
 #default_options=""
 
 #fallback_config="/etc/mkinitcpio.conf"
@@ -255,7 +255,7 @@ echo "Setting mkinitcpio."
 arch-chroot /mnt mkinitcpio -P
 
 # Clearing up mkinitpcio files.
-arch-chroot /mnt rm /boot/initramfs* /boot/vmlinuz* /boot/*-ucode.img
+arch-chroot /mnt rm -f /boot/*
 
 # Refind
 arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
