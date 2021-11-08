@@ -251,8 +251,8 @@ arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /e
 echo "Setting mkinitcpio."
 arch-chroot /mnt mkinitcpio -P
 
-# Clearing up files
-arch-chroot /mnt rm /boot/efi/initramfs-linux-fallback.img /boot/efi/initramfs-linux.img /boot/efi/initramfs-linux-zen.img /boot/efi/amd-ucode.img /boot/efi/intel-ucode.img
+# Clearing up mkinitpcio files.
+arch-chroot /mnt rm /boot/initramfs* /boot/vmlinuz* /boot/*-ucode.img
 
 # Refind
 arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
@@ -277,6 +277,8 @@ cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
         }
     }
 EOT
+
+arch-chroot /mnt rm /boot/refind_linux.conf
 
 # Installing custom shell.
 echo "Installing custom shell."
