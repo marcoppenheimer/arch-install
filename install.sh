@@ -215,7 +215,7 @@ arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /e
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
-arch-chroot /mnt cat <<EOT > "/etc/mkinitcpio.d/linux.preset"
+cat <<EOT > "/mnt/etc/mkinitcpio.d/linux.preset"
     # mkinitcpio preset file for the 'linux' package
 
     ESP_DIR="/boot/efi"
@@ -236,7 +236,7 @@ arch-chroot /mnt cat <<EOT > "/etc/mkinitcpio.d/linux.preset"
     fallback_options="-S autodetect"
 EOT
 
-arch-chroot /mnt cat <<EOT > "/etc/mkinitcpio.d/linux-zen.preset"
+cat <<EOT > "/mnt/etc/mkinitcpio.d/linux-zen.preset"
     suffix='-zen'
     source /etc/mkinitcpio.d/linux.preset
 EOT
@@ -262,7 +262,7 @@ arch-chroot /mnt refind-install
 arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^timeout.*/timeout 5/" /boot/efi/EFI/refind/refind.conf
-arch-chroot /mnt cat <<EOT >> "/boot/efi/EFI/refind/refind.conf"
+cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
     menuentry "Arch Linux (zen)" {
         volume    $UUID_BOOT    
         loader    \vmlinuz-linux-zen
