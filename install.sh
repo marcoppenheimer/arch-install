@@ -116,7 +116,7 @@ UUID_ROOT=$(blkid -s PARTUUID -o value $root)
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux-zen linux-firmware linux-zen-headers base-devel
+pacstrap /mnt base linux-zen linux linux-firmware linux-zen-headers base-devel
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
@@ -213,14 +213,24 @@ HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck f
 arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
 arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
 
+# Configuring /etc/mkinitcpio.conf
+echo "Configuring /etc/mkinitcpio.conf"
+HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
+arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
+arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
+
+# Setting mkinitcpio.
+#echo "Setting mkinitcpio."
+#arch-chroot /mnt mkinitcpio -P
+
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
 cat <<EOT > "/mnt/etc/mkinitcpio.d/linux.preset"
 # mkinitcpio preset file for the 'linux' package
 
-cp -af "/boot/vmlinuz-linux$suffix" /boot/efi/
-cp -af "/boot/intel-ucode.img" /boot/efi/
-cp -af "/boot/amd-ucode.img" /boot/efi
+cp -af "/boot/vmlinuz-linux$suffix" "/boot/efi/"
+cp -af "/boot/intel-ucode.img" "/boot/efi/"
+cp -af "/boot/amd-ucode.img" "/boot/efi"
 ALL_config="/etc/mkinitcpio.conf"
 ALL_kver="/boot/efi/vmlinuz-linux$suffix"
 
@@ -239,12 +249,6 @@ cat <<EOT > "/mnt/etc/mkinitcpio.d/linux-zen.preset"
 suffix='-zen'
 source /etc/mkinitcpio.d/linux.preset
 EOT
-
-# Configuring /etc/mkinitcpio.conf
-echo "Configuring /etc/mkinitcpio.conf"
-HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
-arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
-arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
