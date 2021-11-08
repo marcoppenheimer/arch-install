@@ -216,29 +216,28 @@ arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /e
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
 cat <<EOT > "/mnt/etc/mkinitcpio.d/linux.preset"
-    # mkinitcpio preset file for the 'linux' package
+# mkinitcpio preset file for the 'linux' package
 
-    ESP_DIR="/boot/efi"
-    cp -af "/boot/vmlinuz-linux$suffix" "$ESP_DIR/"
-    cp -af "/boot/intel-ucode.img" "$ESP_DIR/" 
-    cp -af "/boot/amd-ucode.img" "$ESP_DIR/" 
-    ALL_config="/etc/mkinitcpio.conf"
-    ALL_kver="$ESP_DIR/vmlinuz-linux$suffix"
+cp -af "/boot/vmlinuz-linux$suffix" /boot/efi/
+cp -af "/boot/intel-ucode.img" /boot/efi/
+cp -af "/boot/amd-ucode.img" /boot/efi
+ALL_config="/etc/mkinitcpio.conf"
+ALL_kver="/boot/efi/vmlinuz-linux$suffix"
 
-    PRESETS=('default' 'fallback')
+PRESETS=('default' 'fallback')
 
-    #default_config="/etc/mkinitcpio.conf"
-    default_image="$ESP_DIR/initramfs-linux$suffix.img"
-    #default_options=""
+#default_config="/etc/mkinitcpio.conf"
+default_image="/boot/efi/initramfs-linux$suffix.img"
+#default_options=""
 
-    #fallback_config="/etc/mkinitcpio.conf"
-    fallback_image="$ESP_DIR/initramfs-linux-fallback.img"
-    fallback_options="-S autodetect"
+#fallback_config="/etc/mkinitcpio.conf"
+fallback_image="/boot/efi/initramfs-linux-fallback.img"
+fallback_options="-S autodetect"
 EOT
 
 cat <<EOT > "/mnt/etc/mkinitcpio.d/linux-zen.preset"
-    suffix='-zen'
-    source /etc/mkinitcpio.d/linux.preset
+suffix='-zen'
+source /etc/mkinitcpio.d/linux.preset
 EOT
 
 # Configuring /etc/mkinitcpio.conf
@@ -263,19 +262,19 @@ arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux/" /boot/ef
 arch-chroot /mnt sed -i "s/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^timeout.*/timeout 5/" /boot/efi/EFI/refind/refind.conf
 cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
-    menuentry "Arch Linux (zen)" {
-        volume    $UUID_BOOT    
-        loader    \vmlinuz-linux-zen
-        initrd    \initramfs-linux-zen.img
-        icon      \EFI\refind\icons\os_arch.png
-        options   "root=PARTUUID=$UUID_ROOT $REFIND_MICROCODE rw $CMDLINE_LINUX"
-        submenuentry "Boot using fallback initramfs" {
-            initrd \initramfs-linux-fallback.img
-        }
-        submenuentry "Boot to terminal" {
-            add_options "systemd.unit=multi-user.target"
-        }
+menuentry "Arch Linux (zen)" {
+    volume    $UUID_BOOT    
+    loader    \vmlinuz-linux-zen
+    initrd    \initramfs-linux-zen.img
+    icon      \EFI\refind\icons\os_arch.png
+    options   "root=PARTUUID=$UUID_ROOT $REFIND_MICROCODE rw $CMDLINE_LINUX"
+    submenuentry "Boot using fallback initramfs" {
+        initrd \initramfs-linux-fallback.img
     }
+    submenuentry "Boot to terminal" {
+        add_options "systemd.unit=multi-user.target"
+    }
+}
 EOT
 
 arch-chroot /mnt rm /boot/refind_linux.conf
