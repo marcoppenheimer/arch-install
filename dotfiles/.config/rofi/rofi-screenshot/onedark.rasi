@@ -86,9 +86,7 @@ element selected {
 }
 
 element-text {
-  font: "Knack Nerd Font:style=Bold 9";
+  font: "DejaVu Sans Mono 10";
   horizontal-align: 0.5;
   vertical-align: 0.5;
-//   padding: 0.5% 0% 0% 0%;
-//   margin: 0.5% 0.5% -0.5% 0.5%;
 }

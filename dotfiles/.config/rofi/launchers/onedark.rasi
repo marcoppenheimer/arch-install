@@ -5,8 +5,7 @@ configuration {
   hide-scrollbar: true;
   sidebar-mode: false;
   display-drun: "😘";
-  font: "DroidSansMono Nerd Font 15";
-//   font: "DejaVuSansMono Nerd Font 20";
+  font: "DejaVu Sans Mono 15";
 }
 
 * {
@@ -97,7 +96,7 @@ element-icon {
 
 element-text {
   horizontal-align: 0.5;
-  font: "DroidSansMono Nerd Font 10";
+  font: "DejaVu Sans Mono 10";
   vertical-align: 0.5;
   padding: 0.5% 0% 0% 0%;
   margin: 0.5% 0.5% -0.5% 0.5%;

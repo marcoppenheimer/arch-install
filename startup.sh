@@ -2,6 +2,9 @@ sudo pacman -Syu elinks
 
 #yay
 sudo pacman -S --needed git base-devel
+git config --global init.defaultBranch main
+git config --global user.name "marcoppenheimer"
+git config --global user.email "marcaoppenheimer@gmail.com"
 cd /tmp
 git clone https://aur.archlinux.org/yay.git
 cd yay
@@ -46,9 +49,6 @@ yay -S --noconfirm google-cloud-sdk
 #kitty
 sudo pacman -S kitty
 
-#steam
-sudo pacman -S steam
-
 #slack
 yay -S --noconfirm slack-desktop
 
@@ -64,10 +64,6 @@ sudo pacman -S --noconfirm pavucontrol
 sudo pacman -S --noconfirm bluez bluez-utils pulseaudio-bluetooth
 sudo systemctl enable bluetooth.service
 sudo systemctl start bluetooth.service
-# bluetoothctl power on
-# bluetoothctl trust <MAC>
-# bluetoothctl pair <MAC>
-# bluetoothctl connect <MAC>
 
 #screenshot
 yay -S --noconfirm ffcast
@@ -81,10 +77,27 @@ sudo pacman -S ttf-ubuntu-font-family
 sudo pacman -S ttf-dejavu
 sudo pacman -S noto-fonts
 sudo pacman -S ttf-roboto
+
+#default dirs
+mkdir ~/downloads
+mkdir -p ~/pictures/screenshots
+
+#python
+sudo pacman -S pyenv
+
+#gtk-theme
+yay -S --noconfirm nordic-theme
+sudo pacman -S --noconfirm papirus-icon	
+
+#zshrc
+touch .zshrc
+
 #aliases
 echo "alias c=clear" >> ~/.zshrc
+echo 'source ~/.powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc
 
 #oh-my-zsh + powerlevel10k
 sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
-echo 'source ~/.powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc
+
+

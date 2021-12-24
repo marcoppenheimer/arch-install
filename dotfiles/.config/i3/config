@@ -1,9 +1,6 @@
 #mod key
 set $mod Mod4
 
-#font
-# font 
-
 #title
 title_align center
 
@@ -19,7 +16,6 @@ workspace_layout default
 #default border style
 default_border pixel 5
 default_floating_border none
-smart_borders on
 smart_borders no_gaps
 hide_edge_borders smart_no_gaps
 
@@ -32,9 +28,8 @@ for_window [class="Pavucontrol"] floating enable
 for_window [class="File Transfer*"] floating enable move position center
 for_window [urgent=latest] focus
 for_window[window_role="Dialog*"] focus
-for_window [ class="^Microsoft Teams" ] floating enable
 popup_during_fullscreen leave_fullscreen
-for_window [class=".*"] border pixel 0
+for_window [class=".*"] border pixel 1
 
 # start a terminal
 bindsym $mod+Return exec kitty 
@@ -81,10 +76,16 @@ bindsym $mod+Ctrl+Right resize grow width 15 px
 #workspaces
 set $ws1 "1"
 set $ws2 "2"
+set $ws3 "3"
+set $ws4 "4"
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
+bindsym $mod+3 workspace $ws3
+bindsym $mod+4 workspace $ws4
 bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
 bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
+bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
+bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
 
 #colortheme
 # <colorclass> <border> <background> <text> <indicator> <child_border>
