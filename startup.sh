@@ -10,6 +10,13 @@ git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
 
+#default dirs
+sudo pacman -S --noconfirm xdg-user-dirs
+mkdir ~/downloads
+mkdir ~/documents
+xdg-user-dirs-update --set DOWNLOAD ~/downloads
+xdg-user-dirs-update --set DOCUMENTS ~/documents 
+
 #chrome
 yay -S --noconfirm google-chrome
 if [[ $(xdpyinfo | grep dimensions) == *"2160"* ]]; then
@@ -78,10 +85,6 @@ sudo pacman -S ttf-dejavu
 sudo pacman -S noto-fonts
 sudo pacman -S ttf-roboto
 
-#default dirs
-mkdir ~/downloads
-mkdir -p ~/pictures/screenshots
-
 #python
 sudo pacman -S pyenv
 
@@ -89,15 +92,11 @@ sudo pacman -S pyenv
 yay -S --noconfirm nordic-theme
 sudo pacman -S --noconfirm papirus-icon	
 
-#zshrc
-touch .zshrc
+#oh-my-zsh + powerlevel10k
+sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
+git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
 
 #aliases
 echo "alias c=clear" >> ~/.zshrc
 echo 'source ~/.powerlevel10k/powerlevel10k.zsh-theme' >> ~/.zshrc
-
-#oh-my-zsh + powerlevel10k
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
-git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/.powerlevel10k
-
 
