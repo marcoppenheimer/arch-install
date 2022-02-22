@@ -29,7 +29,7 @@ configuration {
 }
 
 window {
-  transparent: "screenshot";
+  transparency: "real";
   background-color: @bg;
   border: 3px;
   height: 15%;
@@ -48,7 +48,7 @@ inputbar {
   background-color: @bg;
   text-color: @text-alt;
   margin: 20px;
-  children: [prompt, entry];
+  children: [prompt, entry, textbox-custom];
 }
 
 prompt {

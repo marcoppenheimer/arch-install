@@ -3,4 +3,4 @@
 theme="onedark"
 dir="$HOME/.config/rofi/launchers"
 
-rofi -no-lazy-grab -show drun -modi drun -theme $dir/"$theme"
+rofi -theme-str 'textbox-custom { expand: false; content: "'$(date +"%T")'";}' -no-lazy-grab -show drun -modi drun -theme $dir/"$theme"

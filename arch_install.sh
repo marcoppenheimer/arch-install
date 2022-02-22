@@ -1,8 +1,6 @@
 #!/usr/bin/env -S bash -e
 
 # iwctl --passphrase PASSPHRASE station DEVICE connect SSID
-# https://github.com/classy-giraffe/easy-arch/blob/main/easy-arch.sh
-# https://github.com/picodotdev/alis/blob/master/alis.sh + https://github.com/picodotdev/alis/blob/master/alis.conf
 
 #Cleaning
 clear
@@ -111,12 +109,13 @@ swapon $swap
 
 UUID_BOOT=$(blkid -s PARTUUID -o value $ESP)
 UUID_ROOT=$(blkid -s PARTUUID -o value $root)
+UUID_SWAP=$(blkid -s PARTUUID -o value $swap)
 
 # Installation.
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux-zen linux linux-firmware linux-zen-headers base-devel
+pacstrap /mnt base linux-zen linux-zen-headers
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
@@ -200,54 +199,32 @@ case "$DISPLAY_DRIVER" in "nvidia"|"nvidia-dkms"|"nvidia-390xx"|"nvidia-390xx-lt
     ;;
 esac
 
-if [[ $DISK == *"nvme"* ]]; then
-    KERNELS_PARAMETERS="nvme_load=YES"
-fi
-
-SILENT_PARAMS="quiet loglevel=3 vga=current rd.systemd.show_status=auto rd.udev.log_level=3 rd.udev.log_priority=3"
-CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS $SILENT_PARAMS"
+SILENT_PARAMS="quiet loglevel=3 rd.systemd.show_status=auto rd.udev.log_level=3"
+RESUME="resume=PARTUUID=$UUID_SWAP"
+CMDLINE_LINUX="$CMDLINE_LINUX $KERNELS_PARAMETERS $SILENT_PARAMS $RESUME"
 
 # Configuring /etc/mkinitcpio.conf
 echo "Configuring /etc/mkinitcpio.conf"
-HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
+HOOKS="base systemd keyboard autodetect filesystems block"
 arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
 arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
-
-# Configuring /etc/mkinitcpio.conf
-echo "Configuring /etc/mkinitcpio.conf"
-HOOKS="base udev usr keyboard autodetect modconf block keymap consolefont fsck filesystems"
-arch-chroot /mnt sed -i "s/^HOOKS=(.*)/HOOKS=($HOOKS)/" /etc/mkinitcpio.conf
-arch-chroot /mnt sed -i "s/^MODULES=(.*)/MODULES=($MKINITCPICO_KMS_MODULES)/" /etc/mkinitcpio.conf
-
-# Setting mkinitcpio.
-#echo "Setting mkinitcpio."
-#arch-chroot /mnt mkinitcpio -P
 
 # Setting mkinitcpio.
 echo "Setting mkinitcpio."
-cat <<EOT > "/mnt/etc/mkinitcpio.d/linux.preset"
-# mkinitcpio preset file for the 'linux' package
+cat <<EOT > "/mnt/etc/mkinitcpio.d/linux-zen.preset"
+# mkinitcpio preset file for the 'linux-zen' package
 
-cp -af "/boot/vmlinuz-linux\$suffix" "/boot/efi/"
-cp -af "/boot/intel-ucode.img" "/boot/efi/"
-cp -af "/boot/amd-ucode.img" "/boot/efi"
+cp -af "/boot/vmlinuz-linux-zen" "/boot/efi/" 2>/dev/null
+cp -af "/boot/intel-ucode.img" "/boot/efi/" 2>/dev/null
+cp -af "/boot/amd-ucode.img" "/boot/efi" 2>/dev/null
 ALL_config="/etc/mkinitcpio.conf"
-ALL_kver="/boot/efi/vmlinuz-linux\$suffix"
+ALL_kver="/boot/efi/vmlinuz-linux-zen"
 
-PRESETS=('default' 'fallback')
+PRESETS=('default')
 
 #default_config="/etc/mkinitcpio.conf"
-default_image="/boot/efi/initramfs-linux\$suffix.img"
+default_image="/boot/efi/initramfs-linux-zen"
 #default_options=""
-
-#fallback_config="/etc/mkinitcpio.conf"
-fallback_image="/boot/efi/initramfs-linux-fallback.img"
-fallback_options="-S autodetect"
-EOT
-
-cat <<EOT > "/mnt/etc/mkinitcpio.d/linux-zen.preset"
-suffix='-zen'
-source /etc/mkinitcpio.d/linux.preset
 EOT
 
 # Setting mkinitcpio.
@@ -262,22 +239,16 @@ arch-chroot /mnt pacman -Syu --noconfirm --needed gdisk
 arch-chroot /mnt pacman -Syu --noconfirm --needed refind
 arch-chroot /mnt refind-install
 
-arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux,windows/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^timeout.*/timeout 5/" /boot/efi/EFI/refind/refind.conf
 cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
 menuentry "Arch Linux (zen)" {
     volume    $UUID_BOOT    
     loader    \vmlinuz-linux-zen
-    initrd    \initramfs-linux-zen.img
+    initrd    \initramfs-linux-zen
     icon      \EFI\refind\icons\os_arch.png
     options   "root=PARTUUID=$UUID_ROOT $REFIND_MICROCODE rw $CMDLINE_LINUX"
-    submenuentry "Boot using fallback initramfs" {
-        initrd \initramfs-linux-fallback.img
-    }
-    submenuentry "Boot to terminal" {
-        add_options "systemd.unit=multi-user.target"
-    }
 }
 EOT
 

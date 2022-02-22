@@ -1,3 +1,8 @@
+#startup
+exec_always --no-startup-id picom
+exec --no-startup-id hsetroot -solid '#0E0025'
+exec_always --no-startup-id ~/.pyenv/shims/flashfocus
+
 #mod key
 set $mod Mod4
 
@@ -11,25 +16,28 @@ floating_modifier $mod
 default_orientation auto
 
 #workspace_layout
-workspace_layout default
+workspace_layout default 
 
 #default border style
-default_border pixel 5
+default_border none
 default_floating_border none
-smart_borders no_gaps
+smart_borders on
 hide_edge_borders smart_no_gaps
 
 #gaps
-gaps inner 10
+gaps inner 10 
+
+#title
+for_window [all] title_window_icon on
+for_window [all] border pixel 0
+for_window [all] title_format "%instance"
 
 #window specific
-for_window [class="mpv"] floating enable move position center
 for_window [class="Pavucontrol"] floating enable
 for_window [class="File Transfer*"] floating enable move position center
 for_window [urgent=latest] focus
 for_window[window_role="Dialog*"] focus
 popup_during_fullscreen leave_fullscreen
-for_window [class=".*"] border pixel 1
 
 # start a terminal
 bindsym $mod+Return exec kitty 
@@ -87,7 +95,6 @@ bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
 bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
 bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
 
-#colortheme
 # <colorclass> <border> <background> <text> <indicator> <child_border>
 client.focused          #44475a #282a36 #F8F8F2 #282a36 #44475a
 client.focused_inactive #44475a #21222c #F8F8F2 #21222c #44475a
