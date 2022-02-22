@@ -115,7 +115,7 @@ UUID_SWAP=$(blkid -s PARTUUID -o value $swap)
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux-zen linux-zen-headers
+pacstrap /mnt base linux-zen linux-zen-headers base-devel
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
