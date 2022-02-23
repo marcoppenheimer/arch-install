@@ -171,11 +171,6 @@ EOF
 echo "Installing display drivers."
 display_drivers_selector
 
-# Installing network.
-echo "Installing network."
-arch-chroot /mnt pacman -Syu --noconfirm --needed networkmanager
-arch-chroot /mnt systemctl enable NetworkManager.service
-
 # Creating personal user and groups.
 echo "Creating personal user and groups."
 read -r -p "Please enter your desired username: " username
@@ -268,4 +263,4 @@ arch-chroot /mnt systemctl enable lightdm.service
 arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
-arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git base-devel
+arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git base-devel iwd
