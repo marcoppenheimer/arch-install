@@ -1,10 +1,23 @@
 #oh-my-zsh + overwrite base
-export ZSH="~/.config/oh-my-zsh"
-sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
-sudo rm -r ~/.z*
+ZSH="${HOME}/.config/oh-my-zsh" sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" --unattended
+sudo rm -r ${HOME}/.z*
 
 # link dots
-cp -rs $(pwd)/dotfiles/ ~/
+[ -d "${HOME}/.config" ] || mkdir ${HOME}/.config
+cp -rs $(pwd)/dotfiles/.zshrc ${HOME}/.zshrc
+cp -rs $(pwd)/dotfiles/.gitconfig ${HOME}/.gitconfig
+cp -rs $(pwd)/dotfiles/.config/bat ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/flashfocus ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/gtk-3.0 ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/i3 ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/kitty ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/mpv ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/nvim ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/picom ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/rofi  ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/user-dirs.dirs ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/vivid ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/zsh ${HOME}/.config/
 
 #elinks
 sudo pacman -Syu elinks
@@ -14,14 +27,10 @@ sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.
        https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
 
 #yay
-sudo pacman -S --needed git base-devel
 cd /tmp
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
-
-#default dirs
-sudo pacman -S --noconfirm xdg-user-dirs
 
 #chrome
 yay -S --noconfirm google-chrome
@@ -40,8 +49,7 @@ yay -S --noconfirm visual-studio-code-bin
 sudo pacman -S --noconfirm gnome-keyring libsecret
 
 #mpv
-#also installs xdg
-sudo pacman -S mpv
+sudo pacman -S --noconfirm mpv
 
 #spotify
 yay -S --noconfirm spotify
@@ -89,12 +97,12 @@ sudo pacman -S --noconfirm slop
 
 #fonts
 yay -S --noconfirm nerd-fonts-dejavu-complete
-sudo pacman -S noto-fonts-emoji
-sudo pacman -S ttf-droid
-sudo pacman -S ttf-ubuntu-font-family
-sudo pacman -S ttf-dejavu
-sudo pacman -S noto-fonts
-sudo pacman -S ttf-roboto
+sudo pacman -S --noconfirm noto-fonts-emoji
+sudo pacman -S --noconfirm ttf-droid
+sudo pacman -S --noconfirm ttf-ubuntu-font-family
+sudo pacman -S --noconfirm ttf-dejavu
+sudo pacman -S --noconfirm noto-fonts
+sudo pacman -S --noconfirm ttf-roboto
 
 #python
 sudo pacman -S --noconfirm pyenv
@@ -104,7 +112,4 @@ sudo pacman -S --noconfirm docker
 
 #gtk-theme
 yay -S --noconfirm nordic-theme
-sudo pacman -S --noconfirm papirus-icon	
-
-#starship
-sudo pacman -S starship
+sudo pacman -S --noconfirm papirus-icon-theme
