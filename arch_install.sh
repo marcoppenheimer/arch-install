@@ -115,7 +115,7 @@ UUID_SWAP=$(blkid -s PARTUUID -o value $swap)
 echo "Server = https://mirrors.kernel.org/archlinux/\$repo/os/\$arch" > /etc/pacman.d/mirrorlist
 sed -i 's/#Color/Color/' /etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /etc/pacman.conf
-pacstrap /mnt base linux-zen linux-zen-headers base-devel
+pacstrap /mnt base linux-zen linux-zen-headers base-devel linux-firmware
 sed -i 's/#Color/Color/' /mnt/etc/pacman.conf
 sed -i 's/#ParallelDownloads/ParallelDownloads/' /mnt/etc/pacman.conf
 echo "" >> /mnt/etc/pacman.conf
@@ -269,3 +269,6 @@ arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinf
 arch-chroot /mnt systemctl enable systemd-networkd.service
 arch-chroot /mnt systemctl enable systemd-resolved.service
 arch-chroot /mnt systemctl enable iwd.service
+
+# Xft.dpi: 176
+# URxvt.font: xft:Source Code Pro: size=15
