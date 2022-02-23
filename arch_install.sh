@@ -264,3 +264,8 @@ arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
 arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git base-devel iwd
+
+# Enabling Network
+arch-chroot /mnt systemctl enable systemd-networkd.service
+arch-chroot /mnt systemctl enable systemd-resolved.service
+arch-chroot /mnt systemctl enable iwd.service
