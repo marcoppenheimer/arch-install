@@ -177,7 +177,7 @@ read -r -p "Please enter your desired username: " username
 read -r -p "Please enter your desired password: " user_password
 arch-chroot /mnt useradd -m -G "wheel,storage,optical" -s /bin/bash $username
 printf "$user_password\n$user_password" | arch-chroot /mnt passwd $username
-arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/' /etc/sudoers
+arch-chroot /mnt sed -i 's/# %wheel ALL=(ALL:ALL) ALL/%wheel ALL=(ALL:ALL) ALL/' /etc/sudoers
 
 # Bootloader
 CPU=$(grep vendor_id /proc/cpuinfo)
@@ -263,7 +263,7 @@ arch-chroot /mnt systemctl enable lightdm.service
 arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
-arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git base-devel iwd
+arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git iwd
 
 # Enabling Network
 arch-chroot /mnt systemctl enable systemd-networkd.service
