@@ -264,12 +264,14 @@ arch-chroot /mnt systemctl enable lightdm.service
 arch-chroot /mnt systemctl set-default graphical.target
 
 # Installing bare bones packages
-arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git iwd
+arch-chroot /mnt pacman -Syu --noconfirm --needed neovim man-db man-pages texinfo elinks git
 
 # Enabling Network
-arch-chroot /mnt systemctl enable systemd-networkd.service
+echo "Installing network."
+arch-chroot /mnt pacman -Syu --noconfirm --needed networkmanager
+arch-chroot /mnt systemctl enable NetworkManager.service
 arch-chroot /mnt systemctl enable systemd-resolved.service
-arch-chroot /mnt systemctl enable iwd.service
+arch-chroot /mnt systemctl disable systemd-networkd.service
 
 # Xft.dpi: 176
 # URxvt.font: xft:Source Code Pro: size=15
