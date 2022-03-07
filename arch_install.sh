@@ -25,17 +25,10 @@ display_drivers_selector () {
         2 ) DISPLAY_DRIVER="nvidia"
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia-dkms
-            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
-            arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
-            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
+            arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia-utils
+            # arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
+            # arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nvidia nvidia_modeset nvidia_uvm nvidia_drm" 
-            ;;
-        3 ) DISPLAY_DRIVER="nouveau"
-            arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
-            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
-            arch-chroot /mnt pacman -Syu --noconfirm --needed libva-mesa-driver
-            arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
-            MKINITCPICO_KMS_MODULES="nouveau" 
             ;;
         * ) echo "You did not enter a valid selection."
             display_drivers_selector

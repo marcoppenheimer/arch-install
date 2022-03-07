@@ -1,5 +1,5 @@
 #startup
-exec_always --no-startup-id picom
+#exec_always --no-startup-id picom
 exec --no-startup-id hsetroot -solid '#0E0025'
 exec_always --no-startup-id ~/.pyenv/shims/flashfocus
 
@@ -13,7 +13,7 @@ title_align center
 floating_modifier $mod
 
 #default orientation
-default_orientation auto
+default_orientation auto 
 
 #workspace_layout
 workspace_layout default 
@@ -34,6 +34,7 @@ for_window [all] title_format "%instance"
 
 #window specific
 for_window [class="Pavucontrol"] floating enable
+for_window [class="Pavucontrol"] resize set 1000 500
 for_window [class="File Transfer*"] floating enable move position center
 for_window [urgent=latest] focus
 for_window[window_role="Dialog*"] focus
@@ -86,14 +87,17 @@ set $ws1 "1"
 set $ws2 "2"
 set $ws3 "3"
 set $ws4 "4"
+set $ws5 "5"
 bindsym $mod+1 workspace $ws1
 bindsym $mod+2 workspace $ws2
 bindsym $mod+3 workspace $ws3
 bindsym $mod+4 workspace $ws4
+bindsym $mod+5 workspace $ws5
 bindsym $mod+Shift+1 move container to workspace $ws1; workspace $ws1
 bindsym $mod+Shift+2 move container to workspace $ws2; workspace $ws2
 bindsym $mod+Shift+3 move container to workspace $ws3; workspace $ws3
 bindsym $mod+Shift+4 move container to workspace $ws4; workspace $ws4
+bindsym $mod+Shift+5 move container to workspace $ws5; workspace $ws5
 
 # <colorclass> <border> <background> <text> <indicator> <child_border>
 client.focused          #44475a #282a36 #F8F8F2 #282a36 #44475a

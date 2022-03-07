@@ -1,9 +1,24 @@
 #elinks
 sudo pacman -Syu elinks
 
-#vimplug
-sh -c 'curl -fLo "${XDG_DATA_HOME:-$HOME/.local/share}"/nvim/site/autoload/plug.vim --create-dirs \
-       https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim'
+# link dots
+[ -d "${HOME}/.config" ] || mkdir ${HOME}/.config
+cp -rs $(pwd)/dotfiles/.zshrc ${HOME}/.zshrc
+cp -rs $(pwd)/dotfiles/.gitconfig ${HOME}/.gitconfig
+cp -rs $(pwd)/dotfiles/.config/starship.toml ${HOME}/.config/starship.toml
+cp -rs $(pwd)/dotfiles/.config/bat ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/flashfocus ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/fontconfig ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/gtk-3.0 ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/i3 ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/kitty ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/mpv ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/nvim ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/picom ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/rofi  ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/user-dirs.dirs ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/vivid ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/zsh ${HOME}/.config/
 
 #yay
 sudo pacman -S --needed git base-devel
@@ -11,6 +26,12 @@ cd /tmp
 git clone https://aur.archlinux.org/yay.git
 cd yay
 makepkg -si
+
+#zsh-plugins
+sudo pacman -S --noconfirm zsh-autosuggestions
+sudo pacman -S --noconfirm zsh-completions
+sudo pacman -S --noconfirm zsh-history-substring-search
+sudo pacman -S --noconfirm zsh-syntax-highlighting
 
 #default dirs
 sudo pacman -S --noconfirm xdg-user-dirs
@@ -33,7 +54,7 @@ sudo pacman -S --noconfirm gnome-keyring libsecret
 
 #mpv
 #also installs xdg
-sudo pacman -S mpv
+sudo pacman -S --noconfirm mpv
 
 #spotify
 yay -S --noconfirm spotify
@@ -84,7 +105,6 @@ yay -S --noconfirm nerd-fonts-dejavu-complete
 sudo pacman -S noto-fonts-emoji
 sudo pacman -S ttf-droid
 sudo pacman -S ttf-ubuntu-font-family
-sudo pacman -S ttf-dejavu
 sudo pacman -S noto-fonts
 sudo pacman -S ttf-roboto
 
@@ -99,4 +119,10 @@ yay -S --noconfirm nordic-theme
 sudo pacman -S --noconfirm papirus-icon	
 
 #starship
-sudo pacman -S starship
+sudo pacman -S --noconfirm starship
+
+#exa
+sudo pacman -S --noconfirm exa
+
+#vivid
+sudo pacman -S --noconfirm vivid
