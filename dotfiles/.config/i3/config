@@ -1,5 +1,5 @@
 #startup
-#exec_always --no-startup-id picom
+exec_always --no-startup-id picom
 exec --no-startup-id hsetroot -solid '#0E0025'
 exec_always --no-startup-id ~/.pyenv/shims/flashfocus
 
@@ -68,6 +68,7 @@ bindsym $mod+Shift+l move right
 bindsym $mod+Tab split toggle
 bindsym $mod+t layout tabbed
 bindsym $mod+s layout stacked
+bindsym $mod+e layout default
 bindsym $mod+Escape fullscreen toggle
 
 # reload the configuration file

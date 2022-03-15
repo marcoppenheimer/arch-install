@@ -126,3 +126,13 @@ sudo pacman -S --noconfirm exa
 
 #vivid
 sudo pacman -S --noconfirm vivid
+
+#lsps
+yay -S --noconfirm lua-language-server
+yay -S --noconfirm pyright
+
+#dust
+yay -S --noconfirm dust-git
+
+#rsync
+sudo pacman -S --noconfirm rsync
