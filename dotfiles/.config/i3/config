@@ -36,15 +36,15 @@ for_window [all] title_format "%instance"
 for_window [class="Pavucontrol"] floating enable
 for_window [class="Pavucontrol"] resize set 1000 500
 for_window [class="File Transfer*"] floating enable move position center
-for_window [title="todo"] floating enable move position center
-for_window [title="todo" floating] resize set 1000 500
+for_window [title="todo.md"] floating enable move position center
+for_window [title="todo.md" floating] resize set 1000 500
 for_window [urgent=latest] focus
 for_window[window_role="Dialog*"] focus
 popup_during_fullscreen leave_fullscreen
 
 # start a terminal
 bindsym $mod+Return exec kitty
-bindsym $mod+Shift+Return exec kitty --title "todo" -e nvim "$HOME/todo.md"; exec sleep 0.2
+bindsym $mod+Shift+Return exec kitty --title "todo.md" -e nvim "$HOME/todo.md"; exec sleep 0.2
 
 # kill focused window
 bindsym $mod+q kill
