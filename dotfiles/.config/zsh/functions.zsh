@@ -14,6 +14,13 @@ function sti {
     echo "$(fc -l -20 | tail -2 | head -1 | cut -c8-999)" >> "$HOME/arch-install/home_install.sh"
 }
 
-function todo {
-    nvim "$HOME/todo.md"
+function start_work {
+    sudo systemctl start snapd.service
+    sudo snap start microk8s
+    microk8s start --wait-ready
+}
+
+function stop_work {
+    microk8s stop
+    sudo systemctl stop microk8s
 }
