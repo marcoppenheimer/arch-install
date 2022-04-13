@@ -3,3 +3,6 @@
 	email = marcaoppenheimer@gmail.com
 [init]
 	defaultBranch = main
+[color]
+	ui = auto
+	status = auto
