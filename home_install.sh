@@ -116,7 +116,7 @@ sudo pacman -S --noconfirm docker
 
 #gtk-theme
 yay -S --noconfirm nordic-theme
-sudo pacman -S --noconfirm papirus-icon	
+sudo pacman -S --noconfirm papirus-icon-theme
 
 #starship
 sudo pacman -S --noconfirm starship
