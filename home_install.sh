@@ -33,9 +33,6 @@ sudo pacman -S --noconfirm zsh-completions
 sudo pacman -S --noconfirm zsh-history-substring-search
 sudo pacman -S --noconfirm zsh-syntax-highlighting
 
-#default dirs
-sudo pacman -S --noconfirm xdg-user-dirs
-
 #chrome
 yay -S --noconfirm google-chrome
 
