@@ -4,6 +4,9 @@ exec --no-startup-id hsetroot -solid '#0E0025'
 exec_always --no-startup-id ~/.pyenv/shims/flashfocus
 exec_always --no-startup-id bluetoothctl power on
 
+#font
+font pango:DejaVu Sans Mono 0
+
 #mod key
 set $mod Mod4
 
@@ -38,7 +41,7 @@ for_window [class="Pavucontrol"] floating enable
 for_window [class="Pavucontrol"] resize set 1000 500
 for_window [class="File Transfer*"] floating enable move position center
 for_window [urgent=latest] focus
-for_window[window_role="Dialog*"] focus
+for_window [window_role="Dialog*"] focus
 popup_during_fullscreen leave_fullscreen
 
 # start a terminal
