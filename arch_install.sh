@@ -139,6 +139,7 @@ cat <<EOT > /mnt/etc/X11/xorg.conf.d/00-keyboard.conf
     EndSection
 EOT
 arch-chroot /mnt localectl set-keymap --no-convert $keymap
+arch-chroot /mnt timedatectl set-ntp true
 
 # Setting swappiness.
 echo "vm.swappiness=10" > /mnt/etc/sysctl.d/99-sysctl.conf

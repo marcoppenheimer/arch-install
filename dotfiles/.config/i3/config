@@ -87,6 +87,10 @@ bindsym $mod+Ctrl+Left resize shrink width 15 px
 bindsym $mod+Ctrl+Down resize grow height 15 px
 bindsym $mod+Ctrl+Up resize shrink height 15 px
 bindsym $mod+Ctrl+Right resize grow width 15 px
+bindsym $mod+Ctrl+Shift+Left resize shrink width 1 px
+bindsym $mod+Ctrl+Shift+Down resize grow height 1 px
+bindsym $mod+Ctrl+Shift+Up resize shrink height 1 px
+bindsym $mod+Ctrl+Shift+Right resize grow width 1 px
 
 #workspaces
 set $ws1 "1"

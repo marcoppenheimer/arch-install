@@ -256,17 +256,17 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
-lspconfig.pyright.setup{
-  on_attach = on_attach,
-  capabilities = capabilities,
-  settings = {
-    python = {
-      analysis = {
-        extraPaths = { "./lib" }
-      }
-    }
-  }
-}
+-- lspconfig.pyright.setup{
+--   on_attach = on_attach,
+--   capabilities = capabilities,
+--   settings = {
+--     python = {
+--       analysis = {
+--         extraPaths = { "./lib" }
+--       }
+--     }
+--   }
+-- }
 
 -- Example custom server
 -- Make runtime files discoverable to the server
