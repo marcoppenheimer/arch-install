@@ -145,7 +145,15 @@ require('gitsigns').setup {
 }
 
 -- Telescope
-require('telescope').setup()
+require('telescope').setup {
+  defaults = {
+    file_ignore_panel = {
+      "venv",
+      "__pycache__"
+    }
+  }
+
+}
 require('telescope').load_extension 'fzf'
 
 --Add leader shortcuts
