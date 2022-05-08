@@ -231,7 +231,8 @@ arch-chroot /mnt refind-install
 
 arch-chroot /mnt sed -i "s/^use_graphics_for.*/use_graphics_for linux,windows/" /boot/efi/EFI/refind/refind.conf
 arch-chroot /mnt sed -i "s/^#scan_all_linux_kernels.*/scan_all_linux_kernels false/" /boot/efi/EFI/refind/refind.conf
-arch-chroot /mnt sed -i "s/^timeout.*/timeout 5/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt sed -i "s/^timeout.*/timeout -1/" /boot/efi/EFI/refind/refind.conf
+arch-chroot /mnt sed -i "s/^#default_selection 1/default_selection vmlinuz-linux-zen/" /boot/efi/EFI/refind/refind.conf
 cat <<EOT >> "/mnt/boot/efi/EFI/refind/refind.conf"
 menuentry "Arch Linux (zen)" {
     volume    $UUID_BOOT    
@@ -267,5 +268,9 @@ arch-chroot /mnt systemctl enable NetworkManager.service
 arch-chroot /mnt systemctl enable systemd-resolved.service
 arch-chroot /mnt systemctl disable systemd-networkd.service
 
-# Xft.dpi: 176
-# URxvt.font: xft:Source Code Pro: size=15
+if [[ $CPU != *"AuthenticAMD"* ]]; then
+    cat <<EOT >> "/mnt/boot/home/$username/.Xresources"
+    Xft.dpi: 176
+    URxvt.font: xft:Source Code Pro: size=15
+EOT
+fi

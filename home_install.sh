@@ -1,7 +1,7 @@
 #elinks
 sudo pacman -Syu elinks
 
-# link dots
+#link dots
 [ -d "${HOME}/.config" ] || mkdir ${HOME}/.config
 cp -rs $(pwd)/dotfiles/.zshrc ${HOME}/.zshrc
 cp -rs $(pwd)/dotfiles/.gitconfig ${HOME}/.gitconfig
@@ -137,7 +137,3 @@ sudo pacman -S --noconfirm rsync
 #v4l2
 sudo pacman -S --noconfirm v4l2loopback-dkms
 
-#streaming
-sudo pacman -S --noconfirm vlc
-sudo pacman -S --noconfirm avahi
-sudo systemctl enable --now avahi-daemon.service

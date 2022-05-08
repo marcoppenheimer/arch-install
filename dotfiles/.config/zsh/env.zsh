@@ -6,3 +6,4 @@ export PATH="$HOME/.poetry/bin:$PATH"
 export HISTFILE="$HOME/.zsh_history"
 export HISTSIZE=10000000 
 export SAVEHIST=10000000 
+export TERM=xterm-256color
