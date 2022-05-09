@@ -12,6 +12,14 @@ vim.cmd [[
   augroup end
 ]]
 
+vim.cmd [[
+  augroup ReplaceNetrw
+      autocmd VimEnter * silent! autocmd! FileExplorer
+      autocmd StdinReadPre * let s:std_in=1
+      autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'cd %:p:h' | call luaeval("require('telescope.builtin').find_files({cwd = _A, hidden=True})", argv()[0]) | endif
+  augroup END
+]]
+
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim' -- Package manager
   use 'navarasu/onedark.nvim' -- Colorscheme
@@ -153,7 +161,6 @@ require('telescope').setup {
       "__pycache__",
     }
   }
-
 }
 require('telescope').load_extension 'fzf'
 
@@ -265,17 +272,17 @@ end
 local capabilities = vim.lsp.protocol.make_client_capabilities()
 capabilities = require('cmp_nvim_lsp').update_capabilities(capabilities)
 
--- lspconfig.pyright.setup{
---   on_attach = on_attach,
---   capabilities = capabilities,
---   settings = {
---     python = {
---       analysis = {
---         extraPaths = { "./lib" }
---       }
---     }
---   }
--- }
+lspconfig.pyright.setup{
+  on_attach = on_attach,
+  capabilities = capabilities,
+  settings = {
+    python = {
+      analysis = {
+        extraPaths = { "./lib" }
+      }
+    }
+  }
+}
 
 -- Example custom server
 -- Make runtime files discoverable to the server

@@ -1,5 +1,6 @@
 alias c="clear"
 alias cat="bat -p"
 alias ls="exa -1TF --sort=Name --git --level=1 -d --git --group-directories-first"
+alias n="n -e -a -P p"
 alias k="microk8s.kubectl"
 alias du="dust"

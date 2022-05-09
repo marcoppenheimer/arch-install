@@ -19,6 +19,7 @@ cp -rs $(pwd)/dotfiles/.config/rofi  ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/user-dirs.dirs ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/vivid ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/zsh ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/nnn ${HOME}/.config/
 
 #yay
 sudo pacman -S --needed git base-devel
@@ -137,3 +138,11 @@ sudo pacman -S --noconfirm rsync
 #v4l2
 sudo pacman -S --noconfirm v4l2loopback-dkms
 
+#nnn
+cd /tmp
+git clone git@github.com:jarun/nnn.git
+make O_RESTOREPREVIEW=1 O_GITSTATUS=1 O_NERD=1
+sudo mv nnn /usr/bin/nnn
+
+#imagemagick
+sudo pacman -S --noconfirm imagemagick
