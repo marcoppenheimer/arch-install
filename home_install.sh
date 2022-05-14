@@ -46,8 +46,7 @@ sudo pacman -S --noconfirm htop
 #bat
 sudo pacman -S --noconfirm bat
 
-#vscode
-yay -S --noconfirm visual-studio-code-bin
+#keyring
 sudo pacman -S --noconfirm gnome-keyring libsecret
 
 #mpv
@@ -146,3 +145,6 @@ sudo mv nnn /usr/bin/nnn
 
 #imagemagick
 sudo pacman -S --noconfirm imagemagick
+
+#modprobes
+sudo cp $HOME/arch-install/modprobes/* /etc/modules-load.d/
