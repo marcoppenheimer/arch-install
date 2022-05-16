@@ -93,7 +93,7 @@ sudo pacman -S --noconfirm bluez bluez-utils pulseaudio-bluetooth
 sudo systemctl enable --now bluetooth.service
 
 #screenshot
-yay -S --noconfirm ffcast
+sudo pacman -S --noconfirm maim
 sudo pacman -S --noconfirm xclip 
 sudo pacman -S --noconfirm slop
 
@@ -140,11 +140,14 @@ sudo pacman -S --noconfirm v4l2loopback-dkms
 #nnn
 cd /tmp
 git clone git@github.com:jarun/nnn.git
+cd nnn
 make O_RESTOREPREVIEW=1 O_GITSTATUS=1 O_NERD=1
 sudo mv nnn /usr/bin/nnn
+sudo pacman -S --noconfirm tmux
 
-#imagemagick
+#images
 sudo pacman -S --noconfirm imagemagick
+sudo pacman -S --noconfirm feh
 
 #modprobes
 sudo cp $HOME/arch-install/modprobes/* /etc/modules-load.d/
