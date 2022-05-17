@@ -1,9 +1,10 @@
 #startup
-exec_always --no-startup-id picom
+# exec_always --no-startup-id picom
 exec --no-startup-id hsetroot -solid '#0E0025'
 exec --no-startup-id feh --bg-scale ~/pictures/wallpapers/back.png
 exec_always --no-startup-id ~/.pyenv/shims/flashfocus
 exec_always --no-startup-id bluetoothctl power on
+exec_always --no-startup-id setxkbmap gb
 
 #font
 font pango:DejaVu Sans Mono 0
@@ -52,10 +53,12 @@ bindsym $mod+Shift+Return exec kitty --title "todo.md" -e nvim "$HOME/todo.md"; 
 # kill focused window
 bindsym $mod+q kill
 
-#launcher
-bindsym $mod+grave exec --no-startup-id "~/.config/rofi/launchers/launch.sh"
+#rofi-launcher
+bindsym $mod+grave exec --no-startup-id "~/.config/rofi/rofi-launcher/launch.sh"
 #rofi-screenshot
 bindsym $mod+0 exec --no-startup-id "~/.config/rofi/rofi-screenshot/rofi-screenshot.sh"
+#rofi-screenshot
+bindsym $mod+9 exec --no-startup-id "~/.config/rofi/rofi-networkmanager/rofi-networkmanager.sh"
 
 # change focus
 bindsym $mod+h focus left

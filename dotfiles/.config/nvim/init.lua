@@ -12,13 +12,13 @@ vim.cmd [[
   augroup end
 ]]
 
--- vim.cmd [[
---   augroup ReplaceNetrw
---       autocmd VimEnter * silent! autocmd! FileExplorer
---       autocmd StdinReadPre * let s:std_in=1
---       autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'cd %:p:h' | call luaeval("require('telescope.builtin').find_files({cwd = _A, hidden=True})", argv()[0]) | endif
---   augroup END
--- ]]
+vim.cmd [[
+  augroup HideNetrw
+    autocmd VimEnter * silent! au! FileExplorer *
+    autocmd VimEnter * :silent exec "!kill -s WINCH $PPID"
+    autocmd VimEnter * exec "cd %:p:h"
+  augroup end
+]]
 
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim' -- Package manager
@@ -42,7 +42,7 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp'
   use 'saadparwaiz1/cmp_luasnip'
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
-  use "luukvbaal/nnn.nvim"
+  use 'luukvbaal/nnn.nvim'
 end)
 
 --Set clipboard copy
@@ -57,7 +57,8 @@ vim.o.expandtab=true
 --Key mappings
 vim.api.nvim_set_keymap('', '<A-j>', ':m .+1<CR>==', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('', '<A-k>', ':m .-2<CR>==', { noremap=true, silent=true })
-
+vim.api.nvim_set_keymap('', 'Q', '', { noremap=true, silent=true })
+vim.api.nvim_set_keymap('', 'q', '', { noremap=true, silent=true })
 --Mod
 vim.o.modifiable=true
 
@@ -153,28 +154,21 @@ require('gitsigns').setup {
   },
 }
 
--- nnn
+--nnn
 local builtin = require("nnn").builtin
 require('nnn').setup({
-	mappings = {
-		{ "<C-t>", builtin.open_in_tab },       -- open file(s) in tab
-		{ "<C-s>", builtin.open_in_split },     -- open file(s) in split
-		{ "<C-v>", builtin.open_in_vsplit },    -- open file(s) in vertical split
-		{ "<C-p>", builtin.open_in_preview },   -- open file in preview split keeping nnn focused
-		{ "<C-y>", builtin.copy_to_clipboard }, -- copy file(s) to clipboard
-		{ "<C-w>", builtin.cd_to_path },        -- cd to file directory
-		{ "<C-e>", builtin.populate_cmdline },  -- populate cmdline (:) with file(s)
-	},
-  picker = {
-    cmd = "BAT_THEME=OneHalfDark tmux new-session nnn -Pp -G",
-    style = { border = "rounded" },
-    session = "shared",
+  mappings = {
+       { "<C-t>", builtin.open_in_tab },       -- open file(s) in tab
+       { "<C-s>", builtin.open_in_split },     -- open file(s) in split
+       { "<C-v>", builtin.open_in_vsplit },    -- open file(s) in vertical split
+       { "<C-p>", builtin.open_in_preview },   -- open file in preview split keeping nnn focused
+       { "<C-y>", builtin.copy_to_clipboard }, -- copy file(s) to clipboard
+       { "<C-w>", builtin.cd_to_path },        -- cd to file directory
+       { "<C-e>", builtin.populate_cmdline },  -- populate cmdline (:) with file(s)
   },
-  replace_netrw = "picker",
-  auto_open = {
-    setup = "picker",
-    tabpage = "picker",
-    empty = "picker",
+  picker = {
+    cmd = "tmux new-session nnn -Pp -G",
+    style = { border = "rounded" },
   },
 })
 
@@ -191,6 +185,7 @@ require('telescope').setup {
 require('telescope').load_extension 'fzf'
 
 --Add leader shortcuts
+vim.api.nvim_set_keymap('n', '<leader>ff', [[<cmd>NnnPicker %:p:h<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>fb', [[<cmd>lua require('telescope.builtin').buffers()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>sb', [[<cmd>lua require('telescope.builtin').current_buffer_fuzzy_find()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin').live_grep({hidden = true})<CR>]], { noremap = true, silent = true })
@@ -198,7 +193,6 @@ vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin'
 vim.api.nvim_set_keymap('n', '<leader><Space>', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gg', [[<cmd>DiffviewOpen<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>xg', [[<cmd>DiffviewClose<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>ff', [[<cmd>NnnPicker<CR>]], { noremap = true, silent = true })
 
 
 local cb = require'diffview.config'.diffview_callback

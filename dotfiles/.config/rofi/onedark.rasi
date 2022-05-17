@@ -1,9 +1,11 @@
 configuration {
+  show-icons: true;
   drun-display-format: "{name}";
   disable-history: false;
   hide-scrollbar: true;
   sidebar-mode: false;
-  display-drun: "🔍";
+  display-drun: "😘";
+  font: "DejaVu Sans Mono 15";
 }
 
 * {
@@ -27,11 +29,11 @@ configuration {
 }
 
 window {
-  transparent: "screenshot";
+  transparency: "real";
   background-color: @bg;
   border: 3px;
-  height: 10%;
-  width: 25%;
+  height: 240px;
+  width: 960px;
   border-color: @fg;
   border-radius: 5px;
 }
@@ -46,11 +48,11 @@ inputbar {
   background-color: @bg;
   text-color: @text-alt;
   margin: 20px;
-  children: [prompt, entry];
+  padding: 0px 0px 10px 0px;
+  children: [prompt, entry, textbox-custom];
 }
 
 prompt {
-  text-color: @blue;
 }
 
 entry {
@@ -74,7 +76,7 @@ element {
   text-color: @text-alt;
   highlight: bold #95ee8f;
   orientation: vertical;
-  padding: 2% 0% 2% 0%;
+  padding: 30px 0px 30px 0px;
 }
 
 element selected {
@@ -85,8 +87,17 @@ element selected {
   border-radius: 5px;
 }
 
-element-text {
-  font: "DejaVu Sans Mono 10";
+element-icon {
+  size: 64px;
+  border: 0px;
   horizontal-align: 0.5;
   vertical-align: 0.5;
+}
+
+element-text {
+  horizontal-align: 0.5;
+  font: "DejaVu Sans Mono 10";
+  vertical-align: 0.5;
+  padding: 0px 0px 0px 0px;
+  margin: 8px 19px -8px 19px;
 }
