@@ -20,6 +20,7 @@ cp -rs $(pwd)/dotfiles/.config/user-dirs.dirs ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/vivid ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/zsh ${HOME}/.config/
 cp -rs $(pwd)/dotfiles/.config/nnn ${HOME}/.config/
+cp -rs $(pwd)/dotfiles/.config/tmux ${HOME}/.config/
 
 #yay
 sudo pacman -S --needed git base-devel
@@ -33,6 +34,7 @@ sudo pacman -S --noconfirm zsh-autosuggestions
 sudo pacman -S --noconfirm zsh-completions
 sudo pacman -S --noconfirm zsh-history-substring-search
 sudo pacman -S --noconfirm zsh-syntax-highlighting
+yay -S --noconfirm zsh-vi-mode-git
 
 #chrome
 yay -S --noconfirm google-chrome
@@ -88,8 +90,8 @@ ssh-keygen
 ssh-keyscan -t rsa github.com >> ~/.ssh/known_hosts
 
 #bluetooth+audio
-sudo pacman -S --noconfirm pavucontrol
-sudo pacman -S --noconfirm bluez bluez-utils pulseaudio-bluetooth
+sudo pacman -S pipewire-pulse
+sudo systemctl enable --now pipewire-pulse.service
 sudo systemctl enable --now bluetooth.service
 
 #screenshot
@@ -112,7 +114,7 @@ sudo pacman -S --noconfirm pyenv
 sudo pacman -S --noconfirm docker
 
 #gtk-theme
-yay -S --noconfirm nordic-theme
+yay -S catppuccin-gtk-theme
 sudo pacman -S --noconfirm papirus-icon-theme
 
 #starship
@@ -139,7 +141,7 @@ sudo pacman -S --noconfirm v4l2loopback-dkms
 
 #nnn
 cd /tmp
-git clone git@github.com:jarun/nnn.git
+git clone https://github.com/jarun/nnn.git
 cd nnn
 make O_RESTOREPREVIEW=1 O_GITSTATUS=1 O_NERD=1
 sudo mv nnn /usr/bin/nnn
@@ -151,3 +153,10 @@ sudo pacman -S --noconfirm feh
 
 #modprobes
 sudo cp $HOME/arch-install/modprobes/* /etc/modules-load.d/
+
+#ripgrep+fzf
+sudo pacman -S --noconfirm ripgrep
+sudo pacman -S --noconfirm fzf
+
+#ytdl
+sudo pacman -S --noconfirm youtube-dl

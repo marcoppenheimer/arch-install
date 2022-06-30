@@ -42,3 +42,8 @@ function n ()
             rm -f "$NNN_TMPFILE" > /dev/null
     fi
 }
+
+function mpv ()
+{
+    nohup mpv $@ > /dev/null 2>&1&
+}

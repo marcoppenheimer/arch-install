@@ -23,7 +23,7 @@ main() {
   # run the selected command
   case $choice in
   'Capture Region - Clip')
-    maim -s > /tmp/screensho_clip.png
+    maim -s > /tmp/screenshot_clip.png
     xclip -selection clipboard -t image/png /tmp/screenshot_clip.png
     rm /tmp/screenshot_clip.png
     ;;

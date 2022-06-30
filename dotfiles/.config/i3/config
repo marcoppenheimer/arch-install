@@ -1,10 +1,9 @@
 #startup
-# exec_always --no-startup-id picom
+exec_always --no-startup-id picom
 exec --no-startup-id hsetroot -solid '#0E0025'
 exec --no-startup-id feh --bg-scale ~/pictures/wallpapers/back.png
 exec_always --no-startup-id ~/.pyenv/shims/flashfocus
 exec_always --no-startup-id bluetoothctl power on
-exec_always --no-startup-id setxkbmap gb
 
 #font
 font pango:DejaVu Sans Mono 0

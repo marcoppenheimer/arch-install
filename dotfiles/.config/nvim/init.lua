@@ -96,7 +96,7 @@ vim.wo.signcolumn = 'yes'
 
 --Set colorscheme
 vim.o.termguicolors = true
--- vim.cmd [[colorscheme onedark]]
+vim.cmd [[colorscheme onedark]]
 
 -- Set completeopt to have a better completion experience
 vim.o.completeopt = 'menuone,noselect'
@@ -116,6 +116,9 @@ require('lualine').setup {
     theme = custom_onedark,
     component_separators = '|',
     section_separators = '',
+  },
+  sections = {
+    lualine_c = {{'filename', path=2 }},
   },
 }
 
@@ -155,19 +158,20 @@ require('gitsigns').setup {
 }
 
 --nnn
+vim.cmd[[highlight NnnBorder guifg=#E5C07B]]
 local builtin = require("nnn").builtin
 require('nnn').setup({
   mappings = {
        { "<C-t>", builtin.open_in_tab },       -- open file(s) in tab
        { "<C-s>", builtin.open_in_split },     -- open file(s) in split
        { "<C-v>", builtin.open_in_vsplit },    -- open file(s) in vertical split
-       { "<C-p>", builtin.open_in_preview },   -- open file in preview split keeping nnn focused
+       { "<C-e>", builtin.open_in_preview },       -- open file in preview split keeping nnn focused
        { "<C-y>", builtin.copy_to_clipboard }, -- copy file(s) to clipboard
        { "<C-w>", builtin.cd_to_path },        -- cd to file directory
        { "<C-e>", builtin.populate_cmdline },  -- populate cmdline (:) with file(s)
   },
   picker = {
-    cmd = "tmux new-session nnn -Pp -G",
+    cmd = "tmux new-session -e BAT_THEME=OneHalfDark nnn -Pp -G -Q -e",
     style = { border = "rounded" },
   },
 })
@@ -194,21 +198,6 @@ vim.api.nvim_set_keymap('n', '<leader><Space>', [[<cmd>lua require('telescope.bu
 vim.api.nvim_set_keymap('n', '<leader>gg', [[<cmd>DiffviewOpen<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>xg', [[<cmd>DiffviewClose<CR>]], { noremap = true, silent = true })
 
-
-local cb = require'diffview.config'.diffview_callback
-require'diffview'.setup {
-  key_bindings = {
-    view = {
-      ["gf"] = cb("goto_file") .. " <cmd>wincmd L<CR>" .. " zi<CR>",
-    },
-    file_panel = {
-      ["gf"] = cb("goto_file") .. " <cmd>wincmd L<CR>" .. " zi<CR>",
-    },
-    file_history_panel = {
-      ["gf"] = cb("goto_file") .. " <cmd>wincmd L<CR>" .. " zi<CR>",
-    },
-  }
-}
 
 -- Treesitter configuration
 -- Parsers must be installed manually via :TSInstall
