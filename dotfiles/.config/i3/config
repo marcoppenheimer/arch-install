@@ -47,7 +47,8 @@ popup_during_fullscreen leave_fullscreen
 
 # start a terminal
 bindsym $mod+Return exec kitty
-bindsym $mod+Shift+Return exec kitty --title "todo.md" -e nvim "$HOME/todo.md"; exec sleep 0.2
+bindsym $mod+n exec kitty --title "todo.md" -e nvim "$HOME/todo.md"; exec sleep 0.2
+bindsym $mod+p exec PATH=$HOME/.pyenv/shims:$PATH kitty --title "temp.py" -e nvim "$HOME/temp.py"; exec sleep 0.2
 
 # kill focused window
 bindsym $mod+q kill

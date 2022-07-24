@@ -6,3 +6,5 @@
 [color]
 	ui = auto
 	status = auto
+[push]
+    autoSetupRemote = true

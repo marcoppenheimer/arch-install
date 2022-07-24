@@ -42,7 +42,8 @@ require('packer').startup(function(use)
   use 'hrsh7th/cmp-nvim-lsp'
   use 'saadparwaiz1/cmp_luasnip'
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
-  use 'luukvbaal/nnn.nvim'
+  use 'luukvbaal/nnn.nvim' -- file explorer and previewer
+  use 'windwp/nvim-autopairs'
 end)
 
 --Set clipboard copy
@@ -70,6 +71,9 @@ vim.api.nvim_set_keymap('', '<C-j>', '<C-w><C-j>', { noremap=true, silent=true }
 vim.api.nvim_set_keymap('', '<C-k>', '<C-w><C-k>', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('', '<C-l>', '<C-w><C-l>', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('', '<C-h>', '<C-w><C-h>', { noremap=true, silent=true })
+
+-- run python
+vim.api.nvim_set_keymap('n', '<C-`>', ':w | :! python %<CR>', { noremap=true, silent=true })
 
 --Set indent
 vim.o.autoindent=true
@@ -157,6 +161,8 @@ require('gitsigns').setup {
   },
 }
 
+require("nvim-autopairs").setup{}
+
 --nnn
 vim.cmd[[highlight NnnBorder guifg=#E5C07B]]
 local builtin = require("nnn").builtin
@@ -196,7 +202,7 @@ vim.api.nvim_set_keymap('n', '<leader>sp', [[<cmd>lua require('telescope.builtin
 vim.api.nvim_set_keymap('n', '<leader>?', [[<cmd>lua require('telescope.builtin').oldfiles()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader><Space>', [[<cmd>lua require('telescope.builtin').git_status()<CR>]], { noremap = true, silent = true })
 vim.api.nvim_set_keymap('n', '<leader>gg', [[<cmd>DiffviewOpen<CR>]], { noremap = true, silent = true })
-vim.api.nvim_set_keymap('n', '<leader>xg', [[<cmd>DiffviewClose<CR>]], { noremap = true, silent = true })
+vim.api.nvim_set_keymap('n', '<leader>gx', [[<cmd>DiffviewClose<CR>]], { noremap = true, silent = true })
 
 
 -- Treesitter configuration
