@@ -47,3 +47,9 @@ function mpv ()
 {
     nohup mpv $@ > /dev/null 2>&1&
 }
+
+function jswitch ()
+{
+    model=$(juju models | sed -e 's/\s.*$//' | grep $1 | sed 's/\*//')
+    juju switch $model
+}  

@@ -20,6 +20,10 @@ vim.cmd [[
   augroup end
 ]]
 
+vim.cmd [[
+  autocmd FileType markdown setlocal spell
+]]
+
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim' -- Package manager
   use 'navarasu/onedark.nvim' -- Colorscheme
@@ -43,8 +47,11 @@ require('packer').startup(function(use)
   use 'saadparwaiz1/cmp_luasnip'
   use 'L3MON4D3/LuaSnip' -- Snippets plugin
   use 'luukvbaal/nnn.nvim' -- file explorer and previewer
-  use 'windwp/nvim-autopairs'
 end)
+
+--run python
+vim.api.nvim_set_keymap('n', '<C-`>', ':w | :! python %<CR>', { noremap=true, silent=true })
+
 
 --Set clipboard copy
 vim.o.clipboard="unnamedplus"
@@ -71,9 +78,6 @@ vim.api.nvim_set_keymap('', '<C-j>', '<C-w><C-j>', { noremap=true, silent=true }
 vim.api.nvim_set_keymap('', '<C-k>', '<C-w><C-k>', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('', '<C-l>', '<C-w><C-l>', { noremap=true, silent=true })
 vim.api.nvim_set_keymap('', '<C-h>', '<C-w><C-h>', { noremap=true, silent=true })
-
--- run python
-vim.api.nvim_set_keymap('n', '<C-`>', ':w | :! python %<CR>', { noremap=true, silent=true })
 
 --Set indent
 vim.o.autoindent=true
@@ -160,8 +164,6 @@ require('gitsigns').setup {
     changedelete = { text = '~' },
   },
 }
-
-require("nvim-autopairs").setup{}
 
 --nnn
 vim.cmd[[highlight NnnBorder guifg=#E5C07B]]
@@ -293,10 +295,26 @@ lspconfig.pyright.setup{
   settings = {
     python = {
       analysis = {
-        extraPaths = { "./lib" }
+        extraPaths = { "./lib" },
       }
     }
   }
+}
+
+local util = require "lspconfig/util"
+lspconfig.gopls.setup{
+  cmd = {"gopls", "serve"},
+  filetypes = {"go", "gomod", "gowork", "gotmpl"},
+  root_dir = util.root_pattern("go.work", "go.mod", ".git"),
+  single_file_support = true,
+  settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
+    },
+  },
 }
 
 -- Example custom server
