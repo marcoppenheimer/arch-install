@@ -20,14 +20,12 @@ display_drivers_selector () {
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed intel-media-driver
-            echo "options i915 enable_fbc=1 fastboot=1" > /mnt/etc/modprobe.d/1915.conf
+            echo "options i915 enable_fbc=1 fastboot=1" > /mnt/etc/modprobe.d/i915.conf
             ;;
         2 ) DISPLAY_DRIVER="nvidia"
             arch-chroot /mnt pacman -Syu --noconfirm --needed mesa
             arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia-dkms
             arch-chroot /mnt pacman -Syu --noconfirm --needed nvidia-utils
-            # arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-nvidia-utils
-            # arch-chroot /mnt pacman -Syu --noconfirm --needed lib32-libva-mesa-driver 
             MKINITCPICO_KMS_MODULES="nvidia nvidia_modeset nvidia_uvm nvidia_drm" 
             ;;
         * ) echo "You did not enter a valid selection."

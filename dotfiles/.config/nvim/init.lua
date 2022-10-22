@@ -24,6 +24,12 @@ vim.cmd [[
   autocmd FileType markdown setlocal spell
 ]]
 
+vim.cmd [[
+  command! Q :q
+  command! W :w
+  command! WQ :wq
+]]
+
 require('packer').startup(function(use)
   use 'wbthomason/packer.nvim' -- Package manager
   use 'navarasu/onedark.nvim' -- Colorscheme
@@ -241,20 +247,20 @@ require('nvim-treesitter.configs').setup {
       enable = true,
       set_jumps = true, -- whether to set jumps in the jumplist
       goto_next_start = {
-        [']m'] = '@function.outer',
-        [']]'] = '@class.outer',
+        [']]'] = '@function.outer',
+        [']m'] = '@class.outer',
       },
       goto_next_end = {
-        [']M'] = '@function.outer',
-        [']['] = '@class.outer',
+        [']['] = '@function.outer',
+        [']M'] = '@class.outer',
       },
       goto_previous_start = {
-        ['[m'] = '@function.outer',
-        ['[['] = '@class.outer',
+        ['[['] = '@function.outer',
+        ['[m'] = '@class.outer',
       },
       goto_previous_end = {
-        ['[M'] = '@function.outer',
-        ['[]'] = '@class.outer',
+        ['[]'] = '@function.outer',
+        ['[M'] = '@class.outer',
       },
     },
   },
