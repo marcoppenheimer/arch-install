@@ -1,4 +1,5 @@
 local builtin = require("nnn").builtin
+vim.cmd[[highlight NnnBorder guifg=#E5C07B]]
 require("nnn").setup(
     {
         mappings = {

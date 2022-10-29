@@ -7,5 +7,6 @@ setopt extended_history
 setopt share_history
 setopt hist_save_no_dups
 setopt hist_ignore_all_dups
+unsetopt BEEP
 
 bindkey "^R" history-incremental-search-backward

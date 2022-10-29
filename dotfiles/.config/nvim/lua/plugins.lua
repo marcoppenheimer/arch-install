@@ -1,9 +1,16 @@
--- Install packer
-local install_path = vim.fn.stdpath "data" .. "/site/pack/packer/start/packer.nvim"
+local install_path = vim.fn.stdpath('data') .. '/site/pack/packer/start/packer.nvim'
+local install_plugins = false
+
 if vim.fn.empty(vim.fn.glob(install_path)) > 0 then
-    vim.fn.execute("!git clone https://github.com/wbthomason/packer.nvim " .. install_path)
+  print('Installing packer...')
+  local packer_url = 'https://github.com/wbthomason/packer.nvim'
+  vim.fn.system({'git', 'clone', '--depth', '1', packer_url, install_path})
+  print('Done.')
+
+  vim.cmd('packadd packer.nvim')
+  install_plugins = true
 end
-vim.api.nvim_command("packadd packer.nvim")
+
 function get_setup(name)
     return string.format('require("setup/%s")', name)
 end
@@ -29,7 +36,7 @@ require("packer").startup(
         use "tpope/vim-rhubarb"
         use {"sindrets/diffview.nvim", requires = {"nvim-lua/plenary.nvim", "kyazdani42/nvim-web-devicons"}}
         use({"nvim-lualine/lualine.nvim", config = get_setup("lualine")})
-        use {"lewis6991/gitsigns.nvim", requires = {"nvim-lua/plenary.nvim"}, config = ("gitsigns")}
+        use ({"lewis6991/gitsigns.nvim", requires = {"nvim-lua/plenary.nvim"}, config = get_setup("gitsigns")})
         use ({
             "VonHeikemen/lsp-zero.nvim",
             requires = {
@@ -47,5 +54,9 @@ require("packer").startup(
                 {"L3MON4D3/LuaSnip"},
                 {"rafamadriz/friendly-snippets"}
             }, config=get_setup("lsp-zero")})
+
+  if install_plugins then
+    require('packer').sync()
+  end
     end
 )
